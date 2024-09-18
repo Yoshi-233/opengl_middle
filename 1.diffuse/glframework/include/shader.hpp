@@ -32,6 +32,8 @@ public:
 
         void setVectorFloat(const std::string &name, const GLfloat *array) const;
 
+        void setVectorFloat(const std::string &name, const glm::vec3 &array) const;
+
         template<class mat_type>
         void setMatrix(const std::string &name, mat_type &value) const;
 

@@ -127,10 +127,19 @@ void Shader::setVectorFloat(const std::string &name, float &&x, float &&y, float
         GL_CHECK_ERR(glUniform3f(location, x, y, z));
 }
 
+void Shader::setVectorFloat(const std::string &name, const glm::vec3 &array) const
+{
+        GLint location = GL_CHECK_ERR(glGetUniformLocation(this->mProgram, name.c_str()));
+
+        GL_CHECK_ERR(glUniform3f(location, array.x, array.y, array.z));
+}
+
 void Shader::setInt(const std::string &name, int &&value) const
 {
         GLint location = GL_CHECK_ERR(glGetUniformLocation(this->mProgram, name.c_str()));
 
         GL_CHECK_ERR(glUniform1i(location, value));
 }
+
+
 

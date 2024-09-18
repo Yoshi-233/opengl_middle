@@ -17,6 +17,10 @@
 #include "application/camera/include/gameCameraController.h"
 
 
+// 平行光：方向和光强 uniform
+glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, -1.0f);
+glm::vec3 lightColor = glm::vec3(0.95f, 0.85f, 0.75f);
+
 std::shared_ptr<Geometry> geometry;
 std::shared_ptr<Texture> grassTexture;
 std::shared_ptr<Texture> landTexture;
@@ -30,7 +34,7 @@ std::shared_ptr<CameraControl> cameraControl;
 
 static void prepareVao()
 {
-        geometry = Geometry::createPlane(6.0f, 6.0f);
+        geometry = Geometry::createBox(6.0f);
         INFO("{}", geometry->getIndicesCount());
 }
 

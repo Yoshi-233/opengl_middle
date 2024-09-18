@@ -29,6 +29,9 @@ public:
         [[nodiscard]] GLuint getUvVbo() const
         { return mUvVbo; };
 
+        [[nodiscard]] GLuint getNormalVbo() const
+        { return mNormalVbo; };
+
         [[nodiscard]] GLuint getEbo() const
         { return mEbo; };
 
@@ -39,6 +42,7 @@ public:
         GLuint mVao{0};
         GLuint mPosVbo{0};
         GLuint mUvVbo{0};
+        GLuint mNormalVbo{0};
         GLuint mEbo{0};
 
         int mIndicesCount{0};

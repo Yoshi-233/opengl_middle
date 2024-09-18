@@ -6,7 +6,10 @@ uniform sampler2D landSampler;
 uniform sampler2D noiseSampler;
 uniform sampler2D dogSampler;
 in vec2 uv;
+in vec3 normal;
 
+uniform vec3 lightDirection;
+uniform vec3 lightColor;
 
 void main()
 {
@@ -16,10 +19,13 @@ void main()
         vec4 dogColor = texture(dogSampler, uv);
         float weight = noiseColor.r;
 
-        // vec4 finalColor = grassColor * weight + landColor * (1.0 - weight);\
-        // weight对应landColor的权重
-        // vec4 finalColor = mix(grassColor, landColor, weight);
-        // 有些情况下透明值不一定是1.0
-        // fragColor = vec4(finalColor.rgb, 1.0);
-        fragColor = vec4(dogColor.rgb, 1.0);
+        // 1. 物体颜色
+        vec3 objColor = dogColor.rgb;
+        // 2. diffuse 数据
+        vec3 normalN = normalize(normal);
+        vec3 lightDirectionN = normalize(lightDirection);
+
+        float diffuse = clamp(dot(-lightDirectionN, normalN), 0.0f, 1.0f);// cos夹角
+
+        fragColor = vec4(lightColor * diffuse * objColor, 0);
 }
