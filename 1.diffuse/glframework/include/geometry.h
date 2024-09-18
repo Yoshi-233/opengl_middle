@@ -18,6 +18,8 @@ public:
 
         static std::shared_ptr<Geometry> createSphere(float radius);
 
+        static std::shared_ptr<Geometry> createPlane(float width, float height);
+
         [[nodiscard]] GLuint getVao() const
         { return mVao; };
 

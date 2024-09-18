@@ -30,7 +30,7 @@ std::shared_ptr<CameraControl> cameraControl;
 
 static void prepareVao()
 {
-        geometry = Geometry::createSphere(6.0f);
+        geometry = Geometry::createPlane(6.0f, 6.0f);
         INFO("{}", geometry->getIndicesCount());
 }
 

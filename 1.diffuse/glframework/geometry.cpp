@@ -200,3 +200,62 @@ std::shared_ptr<Geometry> Geometry::createSphere(float radius)
 
         return geometry;
 }
+
+std::shared_ptr<Geometry> Geometry::createPlane(float width, float height)
+{
+        auto geometry = std::make_shared<Geometry>();
+        geometry->mIndicesCount = 6;
+        float halfWidth = width / 2.0f;
+        float halfHeight = height / 2.0f;
+        float positions[] = {
+                -halfWidth, -halfHeight, 0.0f,
+                halfWidth, -halfHeight, 0.0f,
+                halfWidth, halfHeight, 0.0f,
+                -halfWidth, halfHeight, 0.0f,
+        };
+
+        float uvs[] = {
+                0.0f, 0.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f
+        };
+
+        unsigned int indices[] = {
+                0, 1, 2,
+                2, 3, 0
+        };
+
+        // create vbo
+        GLuint &posVbo = geometry->mPosVbo, &uvVbo = geometry->mUvVbo;
+        glGenBuffers(1, &posVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+        glGenBuffers(1, &uvVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+
+        // create ebo
+        GLuint &ebo = geometry->mEbo;
+        glGenBuffers(1, &ebo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+        /* create vao */
+        glGenVertexArrays(1, &geometry->mVao);
+        glBindVertexArray(geometry->mVao);
+
+        /* bind vbo/ebo */
+        glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void *) 0);
+        glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void *) 0);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+        glBindVertexArray(0);
+
+        return geometry;
+}
