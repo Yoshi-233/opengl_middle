@@ -18,18 +18,6 @@
 #include "glframework/materials/include/phongMaterial.h"
 #include "glframework/include/mesh.h"
 
-
-// 平行光：方向和光强 uniform
-glm::vec3 lightDirection = glm::vec3(-1.0f, 0.0f, -1.0f);
-glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-float specularIntensity = 0.5f;
-glm::vec3 ambientColor = glm::vec3(0.2f);
-
-std::shared_ptr<Texture> grassTexture;
-std::shared_ptr<Texture> landTexture;
-std::shared_ptr<Texture> noiseTexture;
-std::shared_ptr<Texture> dogTexture;
-std::shared_ptr<Texture> testLandTexture;
 glm::mat4 transform{1.0f};
 
 std::unique_ptr<Renderer> renderer;
@@ -40,15 +28,6 @@ std::shared_ptr<AmbientLight> ambLight;
 std::shared_ptr<Camera> camera;
 std::shared_ptr<CameraControl> cameraControl;
 
-static void prepareTexture()
-{
-        grassTexture = std::make_shared<Texture>("assets/textures/grass.jpg", 0);
-        landTexture = std::make_shared<Texture>("assets/textures/land.jpg", 1);
-        noiseTexture = std::make_shared<Texture>("assets/textures/noise.jpg", 2);
-
-        dogTexture = std::make_shared<Texture>("assets/textures/dog_1.jpg", 3);
-        testLandTexture = std::make_shared<Texture>("assets/textures/land.jpg", 3);
-}
 
 static void prepareCamera()
 {
@@ -74,16 +53,23 @@ void prepareAll()
         renderer = std::make_unique<Renderer>();
 
         /* 1.创建geometry */
-        auto geometry = Geometry::createSphere(3.0f);
+        auto geometry = Geometry::createSphere(2.0f);
 
         /* 2. 创建material配置参数 */
-        auto material = std::make_shared<PhongMaterial>();
-        material->setShiness(32.0);
-        material->setDiffuse(std::make_shared<Texture>("assets/textures/dog_1.jpg", 3));
+        auto material_01 = std::make_shared<PhongMaterial>();
+        material_01->setShiness(32.0);
+        material_01->setDiffuse(std::make_shared<Texture>("assets/textures/dog_1.jpg", 3));
+
+        auto material_02 = std::make_shared<PhongMaterial>();
+        material_02->setShiness(32.0);
+        material_02->setDiffuse(std::make_shared<Texture>("assets/textures/land.jpg", 3));
 
         /* 3. 生成mesh*/
-        auto mesh = std::make_shared<Mesh>(geometry, material);
-        meshes.push_back(mesh);
+        auto mesh_01 = std::make_shared<Mesh>(geometry, material_01);
+        auto mesh_02 = std::make_shared<Mesh>(geometry, material_02);
+        mesh_02->setPosition(glm::vec3(4.0f, 0.0f, 0.0f));
+        meshes.push_back(mesh_01);
+        meshes.push_back(mesh_02);
 
         /* 4. 创建light */
         dirLight = std::make_shared<DirectionalLight>();
@@ -134,7 +120,9 @@ void setAPPFunctions()
 
 void doTransform()
 {
-        transform = glm::rotate(transform, 0.03f, glm::vec3(0.0f, 1.0f, 1.0f));
+        meshes[1]->rotateX(0.01f);
+        meshes[1]->rotateY(0.1f);
+        // transform = glm::rotate(transform, 0.03f, glm::vec3(0.0f, 1.0f, 1.0f));
 }
 
 void render()
