@@ -10,6 +10,7 @@ out vec3 worldPosition;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
 
 void main()
 {
@@ -23,6 +24,6 @@ void main()
         // projectionMatrix是投影矩阵
         gl_Position = projectionMatrix * viewMatrix * transformPosition;
         uv = aUV;
-        mat3 normalMatrix = transpose(inverse(mat3(modelMatrix)));
+
         normal = normalMatrix * aNormal;
 }

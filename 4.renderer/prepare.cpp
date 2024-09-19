@@ -4,6 +4,7 @@
 #include "glframework/include/shader.hpp"
 #include "glframework/include/texture.h"
 #include "glframework/include/geometry.h"
+#include "glframework/renderer/include/renderer.h"
 #include "application/app/Application.h"
 #include "common/include/check_err.h"
 #include "common/include/common.h"
@@ -31,20 +32,13 @@ std::shared_ptr<Texture> dogTexture;
 std::shared_ptr<Texture> testLandTexture;
 glm::mat4 transform{1.0f};
 
-std::unique_ptr<Camera> camera;
+std::unique_ptr<Renderer> renderer;
+std::vector<std::shared_ptr<Mesh>> meshes{};
+std::shared_ptr<DirectionalLight> dirLight;
+std::shared_ptr<AmbientLight> ambLight;
+
+std::shared_ptr<Camera> camera;
 std::shared_ptr<CameraControl> cameraControl;
-
-// static void prepareVao()
-// {
-//         geometry = Geometry::createSphere(3.0f);
-//         INFO("{}", geometry->getIndicesCount());
-// }
-
-// static void prepareShader()
-// {
-//         shader = new Shader("assets/shaders/phong.vert",
-//                             "assets/shaders/pong.frag");
-// }
 
 static void prepareTexture()
 {
@@ -58,7 +52,7 @@ static void prepareTexture()
 
 static void prepareCamera()
 {
-        camera = std::make_unique<PerspectiveCamera>(60.0f,
+        camera = std::make_shared<PerspectiveCamera>(60.0f,
                                                      (float) APP.getWidth() / (float) APP.getHeight(),
                                                      0.1f, 1000.f);
 
@@ -74,29 +68,29 @@ static void prepareCamera()
         std::dynamic_pointer_cast<GameCameraController>(cameraControl)->setSpeed(0.4);
 }
 
-static void prepareState()
-{
-        /* 设置opengl状态 */
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
-}
 
 void prepareAll()
 {
-        // prepareVao();
-        // prepareShader();
-        // prepareTexture();
+        renderer = std::make_unique<Renderer>();
+
         /* 1.创建geometry */
         auto geometry = Geometry::createSphere(3.0f);
+
         /* 2. 创建material配置参数 */
-        auto material = std::shared_ptr<PhoneMaterial>();
+        auto material = std::make_shared<PhongMaterial>();
         material->setShiness(32.0);
         material->setDiffuse(std::make_shared<Texture>("assets/textures/dog_1.jpg", 3));
+
         /* 3. 生成mesh*/
         auto mesh = std::make_shared<Mesh>(geometry, material);
+        meshes.push_back(mesh);
+
+        /* 4. 创建light */
+        dirLight = std::make_shared<DirectionalLight>();
+        ambLight = std::make_shared<AmbientLight>();
+        ambLight->setColor(glm::vec3(0.2f));
 
         prepareCamera();
-        prepareState();
 }
 
 // 窗口大小改变回调函数
@@ -145,33 +139,6 @@ void doTransform()
 
 void render()
 {
-        // 清屏
-        GL_CHECK_ERR(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-        shader->begin();
-
-        // 设置sampler采样第0号纹理，注意这里默认是0
-        shader->setInt("grassSampler", 0);
-        shader->setInt("landSampler", 1);
-        shader->setInt("noiseSampler", 2);
-        shader->setInt("dogSampler", 3);
-
-        shader->setMatrix<decltype(transform)>("modelMatrix", transform);
-        shader->setMatrix<decltype(camera->getViewMatrix())>("viewMatrix", camera->getViewMatrix());
-        shader->setMatrix<decltype(camera->getProjectionMatrix())>("projectionMatrix", camera->getProjectionMatrix());
-
-        // 光源参数更新
-        shader->setVectorFloat("lightDirection", lightDirection);
-        shader->setVectorFloat("lightColor", lightColor);
-        shader->setVectorFloat("cameraPosition", camera->mPosition);
-        shader->setFloat("specularIntensity", specularIntensity);
-        shader->setVectorFloat("ambientColor", ambientColor);
-
-        dogTexture->bind();
-        // glBindVertexArray(geometry->getVao());
-
-        /* 第一次绘制 */
-        // glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, nullptr);
-        // 这里最好解绑，这样误操作就不会影响当前vao
-        Shader::end();
+        renderer->render(meshes, camera, dirLight, ambLight);
 }
 

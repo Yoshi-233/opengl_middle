@@ -19,6 +19,8 @@ uniform vec3 cameraPosition;
 
 uniform float specularIntensity;
 
+uniform float shininess;
+
 void main()
 {
         vec4 grassColor = texture(grassSampler, uv);
@@ -46,7 +48,7 @@ void main()
 
         vec3 lightReflect = normalize(reflect(lightDirN, normalN));
         float specular = max(dot(lightReflect, -viewDir), 0.0f);
-        specular = pow(specular, 64);
+        specular = pow(specular, shininess);
         // 这里并不需要objColor，光经过物体反射出去了，漫反射是物体吸收
         // specularIntensity控制光斑呈现的亮度
         vec3 specularColor = lightColor * specular * specularFlag * specularIntensity;

@@ -7,30 +7,30 @@
 #include <utility>
 
 
-PhoneMaterial::PhoneMaterial()
+PhongMaterial::PhongMaterial()
 {
         this->mType = MaterialType::PhongMaterial;
 }
 
-void PhoneMaterial::setDiffuse(std::shared_ptr<Texture> diffuse)
+void PhongMaterial::setDiffuse(std::shared_ptr<Texture> diffuse)
 {
         this->mDiffuse = std::move(diffuse);
 }
 
-void PhoneMaterial::setShiness(float shiness)
+void PhongMaterial::setShiness(float shiness)
 {
         this->mShiness = shiness;
 }
 
-std::shared_ptr<Texture> PhoneMaterial::getDiffuse() const
+std::shared_ptr<Texture> PhongMaterial::getDiffuse() const
 {
         return this->mDiffuse;
 }
 
-float PhoneMaterial::getShiness() const
+float PhongMaterial::getShiness() const
 {
         return this->mShiness;
 }
 
-PhoneMaterial::~PhoneMaterial()
+PhongMaterial::~PhongMaterial()
 = default;

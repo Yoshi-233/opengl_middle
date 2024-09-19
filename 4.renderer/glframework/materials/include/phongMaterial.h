@@ -8,10 +8,10 @@
 #include "material.h"
 #include "../../include/texture.h"
 
-class PhoneMaterial : public Material {
+class PhongMaterial : public Material {
 public:
-        PhoneMaterial();
-        ~PhoneMaterial();
+        PhongMaterial();
+        ~PhongMaterial();
         void setDiffuse(std::shared_ptr<Texture> diffuse);
         void setShiness(float shiness);
         [[nodiscard]] std::shared_ptr<Texture> getDiffuse() const;

@@ -9,9 +9,9 @@
 #include <vector>
 #include "../../include/mesh.h"
 #include "../../include/shader.hpp"
-#include "../light/include/directionalLight.h"
-#include "../light/include/ambientLight.h"
-#include "../materials/include/material.h"
+#include "../../light/include/directionalLight.h"
+#include "../../light/include/ambientLight.h"
+#include "../../materials/include/material.h"
 #include "../../../application/camera/include/camera.h"
 
 
@@ -23,9 +23,9 @@ public:
 
         // 每次调用都会渲染一帧
         void render(const std::vector<std::shared_ptr<Mesh>> &meshes,
-                    std::shared_ptr<Camera> camera,
-                    std::shared_ptr<DirectionalLight> directionalLight,
-                    std::shared_ptr<AmbientLight> ambientLight);
+                    const std::shared_ptr<Camera>& camera,
+                    const std::shared_ptr<DirectionalLight>& directionalLight,
+                    const std::shared_ptr<AmbientLight>& ambientLight);
 
 private:
         // 渲染内部调用， 根据类型不同挑选
