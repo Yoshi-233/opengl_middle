@@ -7,7 +7,7 @@ uniform sampler2D noiseSampler;
 uniform sampler2D dogSampler;
 in vec2 uv;
 in vec3 normal;
-out vec3 worldPosition;
+in vec3 worldPosition;
 
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
