@@ -39,17 +39,23 @@ std::shared_ptr<Geometry> Geometry::createBox(float size)
         float halfSize = size / 2.0f;
         float positions[] = {
                 // Front face
-                -halfSize, -halfSize, halfSize, halfSize, -halfSize, halfSize, halfSize, halfSize, halfSize, -halfSize, halfSize, halfSize,
+                -halfSize, -halfSize, halfSize, halfSize, -halfSize, halfSize, halfSize, halfSize, halfSize, -halfSize,
+                halfSize, halfSize,
                 // Back face
-                -halfSize, -halfSize, -halfSize, -halfSize, halfSize, -halfSize, halfSize, halfSize, -halfSize, halfSize, -halfSize, -halfSize,
+                -halfSize, -halfSize, -halfSize, -halfSize, halfSize, -halfSize, halfSize, halfSize, -halfSize,
+                halfSize, -halfSize, -halfSize,
                 // Top face
-                -halfSize, halfSize, halfSize, halfSize, halfSize, halfSize, halfSize, halfSize, -halfSize, -halfSize, halfSize, -halfSize,
+                -halfSize, halfSize, halfSize, halfSize, halfSize, halfSize, halfSize, halfSize, -halfSize, -halfSize,
+                halfSize, -halfSize,
                 // Bottom face
-                -halfSize, -halfSize, -halfSize, halfSize, -halfSize, -halfSize, halfSize, -halfSize, halfSize, -halfSize, -halfSize, halfSize,
+                -halfSize, -halfSize, -halfSize, halfSize, -halfSize, -halfSize, halfSize, -halfSize, halfSize,
+                -halfSize, -halfSize, halfSize,
                 // Right face
-                halfSize, -halfSize, halfSize, halfSize, -halfSize, -halfSize, halfSize, halfSize, -halfSize, halfSize, halfSize, halfSize,
+                halfSize, -halfSize, halfSize, halfSize, -halfSize, -halfSize, halfSize, halfSize, -halfSize, halfSize,
+                halfSize, halfSize,
                 // Left face
-                -halfSize, -halfSize, -halfSize, -halfSize, -halfSize, halfSize, -halfSize, halfSize, halfSize, -halfSize, halfSize, -halfSize
+                -halfSize, -halfSize, -halfSize, -halfSize, -halfSize, halfSize, -halfSize, halfSize, halfSize,
+                -halfSize, halfSize, -halfSize
         };
 
         float uvs[] = {
@@ -322,3 +328,4 @@ std::shared_ptr<Geometry> Geometry::createPlane(float width, float height)
 
         return geometry;
 }
+

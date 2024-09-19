@@ -12,53 +12,13 @@
 #include "application/camera/include/trackballCameraController.h"
 #include "application/camera/include/gameCameraController.h"
 
-extern glm::vec3 lightDirection;
-extern glm::vec3 lightColor;
-
-extern std::shared_ptr<Geometry> geometry;
-extern std::shared_ptr<Texture> grassTexture;
-extern std::shared_ptr<Texture> landTexture;
-extern std::shared_ptr<Texture> noiseTexture;
-extern std::shared_ptr<Texture> dogTexture;
-extern std::shared_ptr<Texture> testLandTexture;
-extern glm::mat4 transform;
-
-extern std::unique_ptr<Camera> camera;
 extern std::shared_ptr<CameraControl> cameraControl;
 
 extern void prepareAll();
 
 extern void setAPPFunctions();
 
-void render()
-{
-        // 清屏
-        GL_CHECK_ERR(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-        shader->begin();
-
-        // 设置sampler采样第0号纹理，注意这里默认是0
-        shader->setInt("grassSampler", 0);
-        shader->setInt("landSampler", 1);
-        shader->setInt("noiseSampler", 2);
-        shader->setInt("dogSampler", 3);
-
-        shader->setMatrix<decltype(transform)>("modelMatrix", transform);
-        shader->setMatrix<decltype(camera->getViewMatrix())>("viewMatrix", camera->getViewMatrix());
-        shader->setMatrix<decltype(camera->getProjectionMatrix())>("projectionMatrix", camera->getProjectionMatrix());
-
-        // 光源参数更新
-        shader->setVectorFloat("lightDirection", lightDirection);
-        shader->setVectorFloat("lightColor", lightColor);
-        shader->setVectorFloat("cameraPosition", camera->mPosition);
-
-        dogTexture->bind();
-        glBindVertexArray(geometry->getVao());
-
-        /* 第一次绘制 */
-        glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, nullptr);
-        // 这里最好解绑，这样误操作就不会影响当前vao
-        Shader::end();
-}
+extern void render();
 
 int main()
 {

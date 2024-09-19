@@ -9,11 +9,15 @@ in vec2 uv;
 in vec3 normal;
 in vec3 worldPosition;
 
+// 光源參數
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
+uniform vec3 ambientColor; //环境光
 
 // 相机世界位置
 uniform vec3 cameraPosition;
+
+uniform float specularIntensity;
 
 void main()
 {
@@ -44,10 +48,14 @@ void main()
         float specular = max(dot(lightReflect, -viewDir), 0.0f);
         specular = pow(specular, 64);
         // 这里并不需要objColor，光经过物体反射出去了，漫反射是物体吸收
-        vec3 specularColor = lightColor * specular * specularFlag;
+        // specularIntensity控制光斑呈现的亮度
+        vec3 specularColor = lightColor * specular * specularFlag * specularIntensity;
+
+        // 4. 环境光
+        vec3 ambientColor = objColor * ambientColor;
 
         // 最终计算
-        vec3 finalColor = diffuseColor + specularColor;
+        vec3 finalColor = diffuseColor + specularColor + ambientColor;
 
         fragColor = vec4(finalColor, 1.0);
 }
