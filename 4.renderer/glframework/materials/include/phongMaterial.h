@@ -6,14 +6,19 @@
 #define RENDERER_PHONGMATERIAL_H
 
 #include "material.h"
-#include "texture.h"
+#include "../../include/texture.h"
 
 class PhoneMaterial : public Material {
 public:
         PhoneMaterial();
         ~PhoneMaterial();
-public:
-        Texture *mDiffuse{nullptr};
+        void setDiffuse(std::shared_ptr<Texture> diffuse);
+        void setShiness(float shiness);
+        [[nodiscard]] std::shared_ptr<Texture> getDiffuse() const;
+        [[nodiscard]] float getShiness() const;
+
+protected:
+        std::shared_ptr<Texture> mDiffuse{nullptr};
         float mShiness{1.0f}; // 高光反射用
 };
 

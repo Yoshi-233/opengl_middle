@@ -40,8 +40,8 @@ static void prepareVao()
 
 static void prepareShader()
 {
-        shader = new Shader("assets/shaders/vertex.glsl",
-                            "assets/shaders/fragment.glsl");
+        shader = new Shader("assets/shaders/phong.vert",
+                            "assets/shaders/pong.frag");
 }
 
 static void prepareTexture()

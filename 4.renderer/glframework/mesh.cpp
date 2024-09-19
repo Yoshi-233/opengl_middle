@@ -13,3 +13,13 @@ Mesh::~Mesh()
 {
 
 }
+
+std::shared_ptr<Geometry> Mesh::getGeometry() const
+{
+        return this->mGeometry;
+}
+
+std::shared_ptr<Material> Mesh::getMaterial() const
+{
+        return this->mMaterial;
+}

@@ -1,6 +1,8 @@
 # 设置包含目录
 include_directories("./include")
 include_directories("./materials/include")
+include_directories("./light/include")
+include_directories("./renderer/include")
 include_directories("../common/include")
 
 file(GLOB_RECURSE GLFRAMEWORK ./ *.cpp)

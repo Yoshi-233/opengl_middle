@@ -5,7 +5,7 @@
 #ifndef RENDERER_MATERIAL_H
 #define RENDERER_MATERIAL_H
 
-#include "core.h"
+#include "../../include/core.h"
 
 enum class MaterialType {
         PhongMaterial

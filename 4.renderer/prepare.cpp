@@ -24,7 +24,6 @@ glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 float specularIntensity = 0.5f;
 glm::vec3 ambientColor = glm::vec3(0.2f);
 
-std::shared_ptr<Geometry> geometry;
 std::shared_ptr<Texture> grassTexture;
 std::shared_ptr<Texture> landTexture;
 std::shared_ptr<Texture> noiseTexture;
@@ -35,17 +34,17 @@ glm::mat4 transform{1.0f};
 std::unique_ptr<Camera> camera;
 std::shared_ptr<CameraControl> cameraControl;
 
-static void prepareVao()
-{
-        geometry = Geometry::createSphere(3.0f);
-        INFO("{}", geometry->getIndicesCount());
-}
+// static void prepareVao()
+// {
+//         geometry = Geometry::createSphere(3.0f);
+//         INFO("{}", geometry->getIndicesCount());
+// }
 
-static void prepareShader()
-{
-        shader = new Shader("assets/shaders/vertex.glsl",
-                            "assets/shaders/fragment.glsl");
-}
+// static void prepareShader()
+// {
+//         shader = new Shader("assets/shaders/phong.vert",
+//                             "assets/shaders/pong.frag");
+// }
 
 static void prepareTexture()
 {
@@ -91,9 +90,11 @@ void prepareAll()
         auto geometry = Geometry::createSphere(3.0f);
         /* 2. 创建material配置参数 */
         auto material = std::shared_ptr<PhoneMaterial>();
-        material->mShiness = 32.0;
-        material->mDiffuse = new Texture("assets/textures/dog_1.jpg", 3);
+        material->setShiness(32.0);
+        material->setDiffuse(std::make_shared<Texture>("assets/textures/dog_1.jpg", 3));
         /* 3. 生成mesh*/
+        auto mesh = std::make_shared<Mesh>(geometry, material);
+
         prepareCamera();
         prepareState();
 }
@@ -166,10 +167,10 @@ void render()
         shader->setVectorFloat("ambientColor", ambientColor);
 
         dogTexture->bind();
-        glBindVertexArray(geometry->getVao());
+        // glBindVertexArray(geometry->getVao());
 
         /* 第一次绘制 */
-        glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, nullptr);
+        // glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, nullptr);
         // 这里最好解绑，这样误操作就不会影响当前vao
         Shader::end();
 }
