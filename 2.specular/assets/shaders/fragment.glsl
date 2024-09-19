@@ -20,9 +20,9 @@ void main()
         vec4 grassColor = texture(grassSampler, uv);
         vec4 landColor = texture(landSampler, uv);
         vec4 noiseColor = texture(noiseSampler, uv);
-        vec4 dogColor = texture(dogSampler, uv);
         float weight = noiseColor.r;
 
+        vec4 dogColor = texture(dogSampler, uv);
         // 1. 计算光照的通用数据
         vec3 objColor = dogColor.rgb; //物体颜色
         // diffuse 数据

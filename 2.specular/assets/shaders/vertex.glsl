@@ -13,14 +13,15 @@ uniform mat4 projectionMatrix;
 
 void main()
 {
-        vec4 attrPosition = vec4(aPos, 1.0f); // 1.0表示确切位置
-        worldPosition = (modelMatrix * attrPosition).xyz;
+        vec4 transformPosition = vec4(aPos, 1.0f);
+        transformPosition = modelMatrix * transformPosition;// 1.0表示确切位置
+        worldPosition = transformPosition.xyz;
 
         // aPos不允许更改
         // transform * vec4(aPos, 1.0)是自己旋转
         // viewMatrix是摄像机
         // projectionMatrix是投影矩阵
-        gl_Position = projectionMatrix * viewMatrix * vec4(worldPosition, 1.0f);
+        gl_Position = projectionMatrix * viewMatrix * transformPosition;
         uv = aUV;
         normal = aNormal;
 }
