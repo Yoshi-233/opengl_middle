@@ -120,8 +120,8 @@ void setAPPFunctions()
 
 void doTransform()
 {
-        meshes[1]->rotateX(0.01f);
-        meshes[1]->rotateY(0.1f);
+        meshes[1]->rotateX(1.0f);
+        meshes[1]->rotateY(10.0f);
         // transform = glm::rotate(transform, 0.03f, glm::vec3(0.0f, 1.0f, 1.0f));
 }
 
