@@ -2,7 +2,7 @@
 // Created by Shaozheming on 2024/9/16.
 //
 
-#include "include/gameCameraController.h"
+#include "gameCameraController.h"
 
 GameCameraController::GameCameraController()
 = default;

@@ -2,7 +2,7 @@
 // Created by Shaozheming on 2024/9/14.
 //
 
-#include "include/camera.h"
+#include "camera.h"
 
 Camera::~Camera()
 = default;

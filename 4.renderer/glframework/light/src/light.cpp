@@ -2,7 +2,7 @@
 // Created by Shaozheming on 2024/9/19.
 //
 
-#include "include/light.h"
+#include "light.h"
 
 glm::vec3 Light::getColor() const
 {

@@ -2,7 +2,7 @@
 // Created by Shaozheming on 2024/9/14.
 //
 
-#include "include/orthographicCamera.h"
+#include "orthographicCamera.h"
 #include "common.h"
 
 OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top, float near, float far)

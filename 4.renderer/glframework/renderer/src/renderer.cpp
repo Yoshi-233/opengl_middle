@@ -2,8 +2,8 @@
 // Created by Shaozheming on 2024/9/19.
 //
 
-#include "include/renderer.h"
-#include "../materials/include/phongMaterial.h"
+#include "renderer.h"
+#include "phongMaterial.h"
 #include <memory>
 
 Renderer::Renderer()

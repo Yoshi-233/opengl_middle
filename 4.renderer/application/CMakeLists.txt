@@ -7,12 +7,12 @@ include_directories("../glframework/include")
 
 add_library(application app/Application.cpp
         ../common/src/check_err.cpp
-        ./camera/camera.cpp
-        ./camera/orthographicCamera.cpp
-        ./camera/perspectiveCamera.cpp
-        ./camera/cameraControl.cpp
-        ./camera/trackballCameraController.cpp
-        ./camera/gameCameraController.cpp)
+        camera/src/camera.cpp
+        camera/src/orthographicCamera.cpp
+        camera/src/perspectiveCamera.cpp
+        camera/src/cameraControl.cpp
+        camera/src/trackballCameraController.cpp
+        camera/src/gameCameraController.cpp)
 
 # 添加依赖库
 target_link_libraries(application "${PROJECT_SOURCE_DIR}/../thirdParty/lib/libglfw3.a")
