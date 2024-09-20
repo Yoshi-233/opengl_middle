@@ -1,0 +1,103 @@
+//
+// Created by Shaozheming on 2024/9/19.
+//
+
+#include "renderer.h"
+#include "phongMaterial.h"
+#include <memory>
+
+Renderer::Renderer()
+{
+        auto vertexPath = std::string(PROJECT_DIR) + "/assets/shaders/phong.vert";
+        auto fragmentPath = std::string(PROJECT_DIR) +"/assets/shaders/phong.frag";
+        this->mPhoneShader = std::make_shared<Shader>(vertexPath.c_str(), fragmentPath.c_str());
+}
+
+Renderer::~Renderer()
+= default;
+
+void Renderer::render(const std::vector<std::shared_ptr<Mesh>> &meshes, const std::shared_ptr<Camera> &camera,
+                      const std::shared_ptr<DirectionalLight> &directionalLight,
+                      const std::shared_ptr<AmbientLight> &ambientLight)
+{
+        /* 1. opengl的必要状态机 */
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+
+        /* 2.清理画布 */
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        /* 3.遍历mesh绘制 */
+        for (const auto &mesh: meshes) {
+                auto material = mesh->getMaterial();
+                auto geometry = mesh->getGeometry();
+
+                /* 3.1 决定使用哪个shader */
+                std::shared_ptr<Shader> shaderPtr = this->pickShader(material->mType);
+
+                /* 3.2 设置shader的uniform变量 */
+                shaderPtr->begin();
+                // 纹理和纹理单元匹配
+                switch (material->mType) {
+                        case MaterialType::PhongMaterial: {
+                                auto phongMaterial = (PhongMaterial *) material.get();
+                                // diffuse贴图
+                                // 设置sampler采样第0号纹理，注意这里默认是0
+                                // 图片
+                                shaderPtr->setInt("sampler", 0);
+                                phongMaterial->getDiffuse()->bind();
+
+                                // 高光蒙板
+                                shaderPtr->setInt("specularMaskSampler", 1);
+                                phongMaterial->getSpecularMask()->bind();
+
+                                shaderPtr->setMatrix<decltype(mesh->getModelMatrix())>("modelMatrix",
+                                                                                       mesh->getModelMatrix());
+                                shaderPtr->setMatrix<decltype(camera->getViewMatrix())>("viewMatrix",
+                                                                                        camera->getViewMatrix());
+                                shaderPtr->setMatrix<decltype(camera->getProjectionMatrix())>("projectionMatrix",
+                                                                                              camera->getProjectionMatrix());
+
+                                auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
+                                shaderPtr->setMatrix<decltype(normalMatrix)>("normalMatrix", normalMatrix);
+
+                                // 光源参数更新
+                                shaderPtr->setVectorFloat("lightDirection", directionalLight->getDirection());
+                                shaderPtr->setVectorFloat("lightColor", directionalLight->getColor());
+                                shaderPtr->setFloat("specularIntensity", directionalLight->getSpecularIntensity());
+                                shaderPtr->setVectorFloat("ambientColor", ambientLight->getColor());
+                                shaderPtr->setVectorFloat("cameraPosition", camera->mPosition);
+                                shaderPtr->setFloat("shininess", phongMaterial->getShiness());
+                                break;
+                        }
+                        default:
+                                continue;
+                };
+
+                /* 3.3 绑定vao材质 */
+                glBindVertexArray(geometry->getVao());
+
+                /* 3.4 绘制 */
+                /* 第一次绘制 */
+                glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, nullptr);
+                // 这里最好解绑，这样误操作就不会影响当前vao
+                Shader::end();
+        }
+}
+
+std::shared_ptr<Shader> Renderer::pickShader(MaterialType type)
+{
+        std::shared_ptr<Shader> result = nullptr;
+
+        switch (type) {
+                case MaterialType::PhongMaterial:
+                        result = this->mPhoneShader;
+                        break;
+                default:
+                        ERROR("Unsupported material type: {}", static_cast<int>(type));
+                        break;
+        }
+
+        return result;
+}
+
