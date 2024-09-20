@@ -7,4 +7,7 @@ include_directories("../common/include")
 
 file(GLOB_RECURSE GLFRAMEWORK ./ *.cpp)
 
+set(ProjectDir ${CMAKE_SOURCE_DIR})
+add_definitions(-DPROJECT_DIR="${ProjectDir}")
+
 add_library(glframework ${GLFRAMEWORK})

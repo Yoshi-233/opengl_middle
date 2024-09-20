@@ -8,8 +8,9 @@
 
 Renderer::Renderer()
 {
-        this->mPhoneShader = std::make_shared<Shader>("/home/shao/opengl_middle/4.renderer/assets/shaders/phong.vert",
-                                                      "/home/shao/opengl_middle/4.renderer/assets/shaders/phong.frag");
+        auto vertexPath = std::string(PROJECT_DIR) + "/assets/shaders/phong.vert";
+        auto fragmentPath = std::string(PROJECT_DIR) +"/assets/shaders/phong.frag";
+        this->mPhoneShader = std::make_shared<Shader>(vertexPath.c_str(), fragmentPath.c_str());
 }
 
 Renderer::~Renderer()
