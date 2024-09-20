@@ -6,7 +6,7 @@
 #define POINTLIGHT_POINTLIGHT_H
 
 #include "light.h"
-#include "object.h"
+#include "../../include/object.h"
 
 class PointLight : public Light, public Object {
 public:
@@ -14,11 +14,11 @@ public:
 
         ~PointLight() override = default;
 
-        float getKc() const;
+        [[nodiscard]] float getKc() const;
 
-        float getK1() const;
+        [[nodiscard]] float getK1() const;
 
-        float getK2() const;
+        [[nodiscard]] float getK2() const;
 
         void setK2(float mK2);
 

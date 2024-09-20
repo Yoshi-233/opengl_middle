@@ -16,7 +16,7 @@ public:
         [[nodiscard]] glm::vec3 getDirection() const { return mDirection; }
 
 protected:
-        glm::vec3 mDirection{-1.0f, -1.0f, -1.0f};
+        glm::vec3 mDirection{-1.0f, 0.0f, -1.0f};
 
 };
 

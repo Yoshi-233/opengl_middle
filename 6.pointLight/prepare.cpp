@@ -49,16 +49,17 @@ void prepareAll()
         renderer = std::make_unique<Renderer>();
 
         /* 1.创建geometry */
-        auto geometry = Geometry::createSphere(2.0f);
+        auto geometry = Geometry::createBox(2.5f);
 
         /* 2. 创建material配置参数 */
         auto material = std::make_shared<PhongMaterial>();
-        material->setShiness(32.0);
-        material->setDiffuse(std::make_shared<Texture>("assets/textures/dog_1.jpg", 0));
+        material->setShiness(16.0);
+        material->setDiffuse(std::make_shared<Texture>("assets/textures/box.png", 0));
+        material->setSpecularMask(std::make_shared<Texture>("assets/textures/sp_mask.png", 1));
 
         /* 3. 生成mesh*/
         auto mesh = std::make_shared<Mesh>(geometry, material);
-        mesh->setPosition(glm::vec3(4.0f, 0.0f, 0.0f));
+        mesh->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
         meshes.push_back(mesh);
 
         /* 4. 创建light */
@@ -67,10 +68,10 @@ void prepareAll()
         ambLight->setColor(glm::vec3(0.2f));
 
         /* 5. 创建点光源 */
-        auto whiteGeometry = Geometry::createSphere(1.5f);
+        auto whiteGeometry = Geometry::createSphere(0.1f);
         auto whiteMaterial = std::make_shared<WhiteMaterial>();
         whiteMesh = std::make_shared<Mesh>(whiteGeometry, whiteMaterial);
-        whiteMesh->setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
+        whiteMesh->setPosition(glm::vec3(2.0f, 1.0f, 0.0f));
         pointLight->setPosition(whiteMesh->getPosition());
         pointLight->setParameters(65.0);
 

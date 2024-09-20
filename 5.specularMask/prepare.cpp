@@ -47,21 +47,22 @@ void prepareAll()
         renderer = std::make_unique<Renderer>();
 
         /* 1.创建geometry */
-        auto geometry = Geometry::createSphere(2.0f);
+        auto geometry = Geometry::createBox(2.0f);
 
         /* 2. 创建material配置参数 */
         auto material = std::make_shared<PhongMaterial>();
-        material->setShiness(32.0);
+        material->setShiness(64.0);
         material->setDiffuse(std::make_shared<Texture>("assets/textures/box.png", 0));
         material->setSpecularMask(std::make_shared<Texture>("assets/textures/sp_mask.png", 1));
 
         /* 3. 生成mesh*/
         auto mesh = std::make_shared<Mesh>(geometry, material);
-        mesh->setPosition(glm::vec3(4.0f, 0.0f, 0.0f));
+        mesh->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
         meshes.push_back(mesh);
 
         /* 4. 创建light */
         dirLight = std::make_shared<DirectionalLight>();
+
         ambLight = std::make_shared<AmbientLight>();
         ambLight->setColor(glm::vec3(0.2f));
 
@@ -109,8 +110,6 @@ void setAPPFunctions()
 
 void doTransform()
 {
-        meshes[1]->rotateX(1.0f);
-        meshes[1]->rotateY(10.0f);
         // transform = glm::rotate(transform, 0.03f, glm::vec3(0.0f, 1.0f, 1.0f));
 }
 

@@ -21,7 +21,7 @@ uniform vec3 cameraPosition;
 
 uniform float specularIntensity;
 
-uniform float shininess;
+uniform float shiness;
 
 void main()
 {
@@ -48,7 +48,7 @@ void main()
 
         vec3 lightReflect = normalize(reflect(lightDirN, normalN));
         float specular = max(dot(lightReflect, -viewDir), 0.0f);
-        specular = pow(specular, shininess);
+        specular = pow(specular, shiness);
         // 高光蒙板
         float specularMask = texture(specularMaskSampler, uv).r;
 

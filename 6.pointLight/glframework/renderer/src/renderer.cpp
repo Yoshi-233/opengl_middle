@@ -93,7 +93,7 @@ void Renderer::render(const std::vector<std::shared_ptr<Mesh>> &meshes, const st
                                 shaderPtr->setFloat("specularIntensity", directionalLight->getSpecularIntensity());
                                 shaderPtr->setVectorFloat("ambientColor", ambientLight->getColor());
                                 shaderPtr->setVectorFloat("cameraPosition", camera->mPosition);
-                                shaderPtr->setFloat("shininess", phongMaterial->getShiness());
+                                shaderPtr->setFloat("shiness", phongMaterial->getShiness());
 
                         }
                                 break;
@@ -171,7 +171,7 @@ void Renderer::render(const std::vector<std::shared_ptr<Mesh>> &meshes, const st
                                 shaderPtr->setFloat("specularIntensity", pointLight->getSpecularIntensity());
                                 shaderPtr->setVectorFloat("ambientColor", ambientLight->getColor());
                                 shaderPtr->setVectorFloat("cameraPosition", camera->mPosition);
-                                shaderPtr->setFloat("shininess", phongMaterial->getShiness());
+                                shaderPtr->setFloat("shiness", phongMaterial->getShiness());
 
                                 shaderPtr->setFloat("kc", pointLight->getKc());
                                 shaderPtr->setFloat("k1", pointLight->getK1());
