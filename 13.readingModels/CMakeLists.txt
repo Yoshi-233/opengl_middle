@@ -31,4 +31,8 @@ target_link_libraries(${PROJ_NAME} libglfw3.a GL m Xrandr Xi X11 Xxf86vm pthread
 target_link_libraries(${PROJ_NAME} common application glframework libspdlog.a )
 target_link_libraries(${PROJ_NAME} imguilib)
 
+# 打印cmake绝对路径
+message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(${PROJ_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/../thirdParty/lib/libassimp.so")
+
 

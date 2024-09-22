@@ -14,6 +14,7 @@
 #include "application/camera/include/perspectiveCamera.h"
 #include "application/camera/include/trackballCameraController.h"
 #include "application/camera/include/gameCameraController.h"
+#include "application/assimpLoader/include/assimpLoader.h"
 
 #include "glframework/materials/include/phongMaterial.h"
 #include "glframework/materials/include/whiteMaterial.h"
@@ -59,34 +60,17 @@ static void prepareCamera()
 
 void prepareAll()
 {
+        auto model = AssimpLoader::loadModel("assets/fbx/bag/backpack.obj");
         renderer = std::make_unique<Renderer>();
         scene = std::make_shared<Scene>();
+        model->setScale(glm::vec3(0.5f));
+        scene->addChild(model);
 
-        /* 1.创建geometry */
-        auto geometry = Geometry::createBox(2.5f);
-        auto spGeometry = Geometry::createSphere(1.0f);
-
-        /* 2. 创建material配置参数 */
-        auto material = std::make_shared<PhongMaterial>();
-        material->setShiness(16.0);
-        material->setDiffuse(std::make_shared<Texture>("assets/textures/box.png", 0));
-        material->setSpecularMask(std::make_shared<Texture>("assets/textures/sp_mask.png", 1));
-
-        /* 3. 生成mesh*/
-        auto mesh = std::make_shared<Mesh>(geometry, material);
-        auto spMesh = std::make_shared<Mesh>(spGeometry, material);
-        mesh->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-        spMesh->setPosition(glm::vec3(-6.0f, 0.0f, 0.0f));
-        // meshes.push_back(mesh);
-        // meshes.push_back(spMesh);
-        mesh->addChild(spMesh);
-        scene->addChild(mesh);
-
-        /* 4. 创建环境光light */
+        /* 1. 创建环境光light */
         ambLight = std::make_shared<AmbientLight>();
         ambLight->setColor(glm::vec3(0.2f));
 
-        /* 5. 创建探照灯 */
+        /* 2. 创建探照灯 */
         auto whiteGeometry = Geometry::createSphere(0.1f);
         auto whiteMaterial = std::make_shared<WhiteMaterial>();
         whiteSpotMesh = std::make_shared<Mesh>(whiteGeometry, whiteMaterial);
@@ -100,11 +84,12 @@ void prepareAll()
         spotLight->setInnerAngle(30.0f);
         spotLight->setOuterAngle(45.0f);
 
-        /* 6. 创建平行光 */
+        /* 3. 创建平行光 */
         directionalLight = std::make_shared<DirectionalLight>();
         directionalLight->setDirection(glm::vec3(-1.0f, -1.0f, 0.0f));
+        directionalLight->setSpecularIntensity(0.1f);
 
-        /* 7. 创建点光源 */
+        /* 4. 创建点光源 */
         auto whitePointGeometry = Geometry::createSphere(0.1f);
         auto whitePointMaterial = std::make_shared<WhiteMaterial>();
         whitePointMesh = std::make_shared<Mesh>(whitePointGeometry, whitePointMaterial);

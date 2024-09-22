@@ -11,12 +11,22 @@
 
 class Texture {
 public:
+        static std::shared_ptr<Texture> createTexture(const std::string &path, unsigned int unit);
+
+        static std::shared_ptr<Texture> createTextureFromMemory(const std::string &path, unsigned int unit,
+                                                      unsigned char *dataIN, int width, int height);
+
         Texture(const std::string &path, unsigned int unit);
+
+        // 从内存当中加载纹理，fbx文件自带
+        Texture(unsigned int unit, unsigned char *dataIN, int width, int height);
 
         ~Texture();
 
 public:
         void bind() const;
+
+        void setUnit(unsigned int unit);
 
         [[nodiscard]] int getWidth() const;
 
@@ -27,6 +37,9 @@ private:
         int mWidth{0};
         int mHeight{0};
         unsigned int mUnit{0}; // GL_TEXTURE0 + mUnit 表示绑定的纹理单元
+
+        // 纹理缓存
+        static std::unordered_map<std::string, std::shared_ptr<Texture>> mTextureCache;
 };
 
 #endif //TEXTURE_TEXTURE_H

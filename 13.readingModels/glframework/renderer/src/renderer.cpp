@@ -247,9 +247,9 @@ void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::sh
                                 shaderPtr->setInt("sampler", 0);
                                 phongMaterial->getDiffuse()->bind();
 
-                                // 高光蒙板
-                                shaderPtr->setInt("specularMaskSampler", 1);
-                                phongMaterial->getSpecularMask()->bind();
+                                // // 高光蒙板
+                                // shaderPtr->setInt("specularMaskSampler", 1);
+                                // phongMaterial->getSpecularMask()->bind();
 
                                 shaderPtr->setMatrix<decltype(mesh->getModelMatrix())>("modelMatrix",
                                                                                        mesh->getModelMatrix());
