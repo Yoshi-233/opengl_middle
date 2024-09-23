@@ -247,9 +247,16 @@ void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::sh
                                 shaderPtr->setInt("sampler", 0);
                                 phongMaterial->getDiffuse()->bind();
 
-                                // 高光蒙板
-                                shaderPtr->setInt("specularMaskSampler", 1);
-                                phongMaterial->getSpecularMask()->bind();
+                                if(phongMaterial->getSpecularMask() != nullptr) {
+                                        // 高光蒙板
+                                        shaderPtr->setFloat("specularMaskFlag", 1.0f);
+                                        shaderPtr->setInt("specularMaskSampler", 1);
+                                        phongMaterial->getSpecularMask()->bind();
+                                } else {
+                                        shaderPtr->setFloat("specularMaskFlag", 0.0f);
+                                }
+
+                                // INFO(phongMaterial->getSpecularMask() != nullptr);
 
                                 shaderPtr->setMatrix<decltype(mesh->getModelMatrix())>("modelMatrix",
                                                                                        mesh->getModelMatrix());

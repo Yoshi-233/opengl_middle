@@ -60,6 +60,7 @@ static void prepareCamera()
 
 void prepareAll()
 {
+        // assets/fbx/bag/backpack.obj assets/fbx/Fist Fight B.fbx
         auto model = AssimpLoader::loadModel("assets/fbx/bag/backpack.obj");
         renderer = std::make_unique<Renderer>();
         scene = std::make_shared<Scene>();

@@ -132,8 +132,8 @@ std::shared_ptr<Mesh> AssimpLoader::processMesh(aiMesh *aiMesh, const aiScene *s
                 texture->setUnit(0);
                 material->setDiffuse(texture);
                 if (!specularTexture) {
-                        specularTexture = std::make_shared<Texture>(std::string(PROJECT_DIR_INAPP) + "/assets/textures/box.png",
-                                                            1);
+                        // specularTexture = std::make_shared<Texture>(std::string(PROJECT_DIR_INAPP) + "/assets/textures/box.png",
+                        //                                     1);
                 }
                 specularTexture->setUnit(1);
                 material->setSpecularMask(specularTexture);

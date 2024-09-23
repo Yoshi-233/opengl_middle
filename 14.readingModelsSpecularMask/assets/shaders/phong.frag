@@ -46,6 +46,7 @@ struct SpotLight {
 uniform SpotLight spotLight;
 uniform PointLight pointLights[POINT_LIGHT_NUM];
 uniform DirectionalLight directionalLight;
+uniform float specularMaskFlag = 1.0f;
 
 // 计算漫反射相关的函数
 vec3 calculateDiffuse(vec3 lightColor, vec3 objColor, vec3 lightDirN, vec3 normalN)
@@ -72,7 +73,7 @@ vec3 calculateSpecular(vec3 lightColor, vec3 lightDirN, vec3 normalN, vec3 viewD
         // 3. 计算高光强度
         specular = pow(specular, shiness);
         // 高光蒙板
-        float specularMask = texture(specularMaskSampler, uv).r;
+        float specularMask = (specularMaskFlag == 1) ? texture(specularMaskSampler, uv).r : 1;
 
         // 这里并不需要objColor，光经过物体反射出去了，漫反射是物体吸收
         // specularIntensity控制光斑呈现的亮度

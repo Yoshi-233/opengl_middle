@@ -33,6 +33,6 @@ target_link_libraries(${PROJ_NAME} imguilib)
 
 # 打印cmake绝对路径
 message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
-target_link_libraries(${PROJ_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/../thirdParty/lib/libassimp.so")
-
+#target_link_libraries(${PROJ_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/../thirdParty/lib/libassimp.so")
+target_link_libraries(${PROJ_NAME} "/usr/local/lib/libassimp.so")
 
