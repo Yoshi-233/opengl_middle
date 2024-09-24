@@ -1,0 +1,345 @@
+//
+// Created by Shaozheming on 2024/9/19.
+//
+
+#include "renderer.h"
+#include "scene.h"
+#include "phongMaterial.h"
+#include <memory>
+
+Renderer::Renderer()
+{
+        auto phongVertexPath = std::string(PROJECT_DIR) + "/assets/shaders/phong.vert";
+        auto phongFragmentPath = std::string(PROJECT_DIR) + "/assets/shaders/phong.frag";
+        this->mPhoneShader = std::make_shared<Shader>(phongVertexPath.c_str(),
+                                                      phongFragmentPath.c_str());
+
+        auto whiteVertexPath = std::string(PROJECT_DIR) + "/assets/shaders/white.vert";
+        auto whiteFragmentPath = std::string(PROJECT_DIR) + "/assets/shaders/white.frag";
+        this->mWhiteShader = std::make_shared<Shader>(whiteVertexPath.c_str(),
+                                                      whiteFragmentPath.c_str());
+
+}
+
+Renderer::~Renderer()
+= default;
+
+std::shared_ptr<Shader> Renderer::pickShader(MaterialType type)
+{
+        std::shared_ptr<Shader> result = nullptr;
+
+        switch (type) {
+                case MaterialType::PhongMaterial:
+                        result = this->mPhoneShader;
+                        break;
+                case MaterialType::WhiteMaterial:
+                        result = this->mWhiteShader;
+                        break;
+                default:
+                        ERROR("Unsupported material type: {}", static_cast<int>(type));
+                        break;
+        }
+
+        return result;
+}
+
+void Renderer::processDirectionLight(const std::shared_ptr<Shader> &shaderPtr,
+                                     const std::shared_ptr<DirectionalLight> &directionalLight)
+{
+        CHECK_POINTER_RETURN_VOID(directionalLight);
+        /* 平行光参数 */
+        shaderPtr->setVectorFloat("directionalLight.direction",
+                                  directionalLight->getDirection());
+        shaderPtr->setVectorFloat("directionalLight.color", directionalLight->getColor());
+        shaderPtr->setFloat("directionalLight.specularIntensity",
+                            directionalLight->getSpecularIntensity());
+}
+
+inline void Renderer::processPointLight(const std::shared_ptr<Shader> &shaderPtr,
+                                        const std::shared_ptr<PointLight> &pointLight)
+{
+        CHECK_POINTER_RETURN_VOID(pointLight);
+
+        shaderPtr->setVectorFloat("pointLight.position",
+                                  pointLight->getPosition());
+        shaderPtr->setVectorFloat("pointLight.color", pointLight->getColor());
+        shaderPtr->setFloat("pointLight.specularIntensity",
+                            pointLight->getSpecularIntensity());
+        shaderPtr->setFloat("pointLight.kc", pointLight->getKc());
+        shaderPtr->setFloat("pointLight.k1", pointLight->getK1());
+        shaderPtr->setFloat("pointLight.k2", pointLight->getK2());
+}
+
+inline void Renderer::processPointLight(const std::shared_ptr<Shader> &shaderPtr,
+                                        const std::vector<std::shared_ptr<PointLight>> &pointLights)
+{
+        if (pointLights.empty()) {
+                shaderPtr->setFloat("pointLightsFlag", 0);
+        } else {
+                shaderPtr->setFloat("pointLightsFlag", 1);
+        }
+
+        for (int i = 0; i < pointLights.size(); i++) {
+                auto baseName = "pointLights[" + std::to_string(i) + "]";
+
+                shaderPtr->setVectorFloat(baseName + ".position",
+                                          pointLights[i]->getPosition());
+                shaderPtr->setVectorFloat(baseName + ".color", pointLights[i]->getColor());
+                shaderPtr->setFloat(baseName + ".specularIntensity",
+                                    pointLights[i]->getSpecularIntensity());
+                shaderPtr->setFloat(baseName + ".kc", pointLights[i]->getKc());
+                shaderPtr->setFloat(baseName + ".k1", pointLights[i]->getK1());
+                shaderPtr->setFloat(baseName + ".k2", pointLights[i]->getK2());
+        }
+}
+
+inline void Renderer::processSpotLight(const std::shared_ptr<Shader> &shaderPtr,
+                                       const std::shared_ptr<SpotLight> &spotLight)
+{
+        CHECK_POINTER_RETURN_VOID(spotLight);
+        shaderPtr->setVectorFloat("spotLight.position", spotLight->getPosition());
+        shaderPtr->setVectorFloat("spotLight.color", spotLight->getColor());
+        shaderPtr->setFloat("spotLight.specularIntensity",
+                            spotLight->getSpecularIntensity());
+        shaderPtr->setVectorFloat("spotLight.targetDirection",
+                                  spotLight->getTargetDirection());
+        // 下面是弧度值
+        shaderPtr->setFloat("spotLight.innerLine",
+                            glm::cos(glm::radians(spotLight->getInnerAngle())));
+        shaderPtr->setFloat("spotLight.outerLine",
+                            glm::cos(glm::radians(spotLight->getOuterAngle())));
+}
+
+inline void Renderer::processSpotLight(const std::shared_ptr<Shader> &shaderPtr,
+                                       const std::vector<std::shared_ptr<SpotLight>> &spotLights)
+{
+        if (spotLights.empty()) {
+                shaderPtr->setFloat("spotLightsFlag", 0);
+        } else {
+                shaderPtr->setFloat("spotLightsFlag", 1);
+        }
+
+        for (int i = 0; i < spotLights.size(); i++) {
+                auto baseName = "spotLights[" + std::to_string(i) + "]";
+
+                shaderPtr->setVectorFloat(baseName + ".position", spotLights[i]->getPosition());
+                shaderPtr->setVectorFloat(baseName + ".color", spotLights[i]->getColor());
+                shaderPtr->setFloat(baseName + ".specularIntensity",
+                                    spotLights[i]->getSpecularIntensity());
+                shaderPtr->setVectorFloat(baseName + ".targetDirection",
+                                          spotLights[i]->getTargetDirection());
+                // 下面是弧度值
+                shaderPtr->setFloat(baseName + ".innerLine",
+                                    glm::cos(glm::radians(spotLights[i]->getInnerAngle())));
+                shaderPtr->setFloat(baseName + ".outerLine",
+                                    glm::cos(glm::radians(spotLights[i]->getOuterAngle())));
+        }
+}
+
+void Renderer::processSpecularMask(const std::shared_ptr<Shader> &shaderPtr,
+                                   PhongMaterial *phongMaterial)
+{
+        if (phongMaterial->getSpecularMask() != nullptr) {
+                // 高光蒙板
+                shaderPtr->setFloat("specularMaskFlag", 1.0f);
+                shaderPtr->setInt("specularMaskSampler", 1);
+                phongMaterial->getSpecularMask()->bind();
+        } else {
+                shaderPtr->setFloat("specularMaskFlag", 0.0f);
+        }
+}
+
+void Renderer::processCommonInfo(const std::shared_ptr<Shader> &shaderPtr,
+                                 const std::shared_ptr<Camera> &camera,
+                                 const std::shared_ptr<Mesh> &mesh)
+{
+        shaderPtr->setMatrix<decltype(mesh->getModelMatrix())>("modelMatrix",
+                                                               mesh->getModelMatrix());
+        shaderPtr->setMatrix<decltype(camera->getViewMatrix())>("viewMatrix",
+                                                                camera->getViewMatrix());
+        shaderPtr->setMatrix<decltype(camera->getProjectionMatrix())>("projectionMatrix",
+                                                                      camera->getProjectionMatrix());
+
+        auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
+        shaderPtr->setMatrix<decltype(normalMatrix)>("normalMatrix", normalMatrix);
+
+        // 光源参数更新
+        shaderPtr->setVectorFloat("cameraPosition", camera->mPosition);
+}
+
+// 环境光和基础光照
+void Renderer::processBasicShiness(const std::shared_ptr<Shader> &shaderPtr,
+                                   PhongMaterial *phongMaterial,
+                                   const std::shared_ptr<AmbientLight> &ambientLight)
+{
+        shaderPtr->setVectorFloat("ambientColor", ambientLight->getColor());
+        shaderPtr->setFloat("shiness", phongMaterial->getShiness());
+}
+
+void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::shared_ptr<Camera> &camera,
+                            const std::shared_ptr<DirectionalLight> &directionalLight,
+                            const std::vector<std::shared_ptr<PointLight>> &pointLights,
+                            const std::shared_ptr<SpotLight> &spotLight,
+                            const std::shared_ptr<AmbientLight> &ambientLight)
+{
+        if (object->getType() == ObjectType::MESH) {
+                auto mesh = std::dynamic_pointer_cast<Mesh>(object);
+                auto material = mesh->getMaterial();
+                auto geometry = mesh->getGeometry();
+
+                // 设置渲染状态
+                Renderer::setGLStatus(material);
+
+                /* 3.1 决定使用哪个shader */
+                std::shared_ptr<Shader> shaderPtr = this->pickShader(material->mType);
+
+                /* 3.2 设置shader的uniform变量 */
+                shaderPtr->begin();
+                // 纹理和纹理单元匹配
+                switch (material->mType) {
+                        case MaterialType::PhongMaterial: {
+                                auto phongMaterial = (PhongMaterial *) material.get();
+                                // diffuse贴图
+                                // 设置sampler采样第0号纹理，注意这里默认是0
+                                // 图片
+                                CHECK_POINTER_RETURN_VOID(phongMaterial->getDiffuse());
+                                shaderPtr->setInt("sampler", 0);
+                                phongMaterial->getDiffuse()->bind();
+
+                                Renderer::processSpecularMask(shaderPtr, phongMaterial);
+
+                                // INFO(phongMaterial->getSpecularMask() != nullptr);
+
+                                Renderer::processCommonInfo(shaderPtr, camera, mesh);
+
+                                /* 光源参数更新 */
+                                Renderer::processBasicShiness(shaderPtr, phongMaterial, ambientLight);
+
+                                /* 点光源参数 */
+                                Renderer::processPointLight(shaderPtr, pointLights);
+
+                                /* 平行光参数 */
+                                if (directionalLight != nullptr) {
+                                        Renderer::processDirectionLight(shaderPtr, directionalLight);
+                                }
+
+                                /* 聚光灯参数 */
+                                if (spotLight != nullptr) {
+                                        processSpotLight(shaderPtr, spotLight);
+                                }
+                        }
+                                break;
+                        case MaterialType::WhiteMaterial: {
+                                shaderPtr->setMatrix<decltype(mesh->getModelMatrix())>("modelMatrix",
+                                                                                       mesh->getModelMatrix());
+                                shaderPtr->setMatrix<decltype(camera->getViewMatrix())>("viewMatrix",
+                                                                                        camera->getViewMatrix());
+                                shaderPtr->setMatrix<decltype(camera->getProjectionMatrix())>("projectionMatrix",
+                                                                                              camera->getProjectionMatrix());
+                        }
+                                break;
+                        default:
+                                break;
+                };
+
+                /* 3.3 绑定vao材质 */
+                glBindVertexArray(geometry->getVao());
+
+                /* 3.4 绘制 */
+                /* 第一次绘制 */
+                glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, nullptr);
+                // 这里最好解绑，这样误操作就不会影响当前vao
+                Shader::end();
+        }
+
+        /* 2. 对每个子节点都需要调用renderObject */
+        auto children = object->getChildren();
+        for (auto &child: children) {
+                this->renderObject(child, camera, directionalLight, pointLights, spotLight, ambientLight);
+        }
+}
+
+void Renderer::render(const std::shared_ptr<Scene> &scene,
+                      const std::shared_ptr<Camera> &camera,
+                      const std::shared_ptr<DirectionalLight> &directionalLight,
+                      const std::vector<std::shared_ptr<PointLight>> &pointLights,
+                      const std::shared_ptr<SpotLight> &spotLight,
+                      const std::shared_ptr<AmbientLight> &ambientLight
+)
+{
+        /* 1. opengl的必要状态机, 为默认设置，否则，当最后一个mesh没有写入时，会导致glClear失败 */
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glDepthMask(GL_TRUE);
+
+        /* 2.清理画布 */
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        /* 3.从scene根节点绘制 */
+        renderObject(std::static_pointer_cast<Object>(scene), camera, directionalLight,
+                     pointLights, spotLight, ambientLight);
+
+}
+
+void Renderer::render(const std::shared_ptr<Scene> &scene, const std::shared_ptr<Camera> &camera,
+                      const std::shared_ptr<DirectionalLight> &directionalLight,
+                      const std::shared_ptr<AmbientLight> &ambientLight)
+{
+        /* 1. opengl的必要状态机 */
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+
+        /* 2.清理画布 */
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        /* 3.从scene根节点绘制 */
+        auto pointLights = std::vector<std::shared_ptr<PointLight>>{};
+        renderObject(std::static_pointer_cast<Object>(scene), camera, directionalLight,
+                     pointLights, nullptr, ambientLight);
+}
+
+void Renderer::render(const std::shared_ptr<Scene> &scene,
+                      const std::shared_ptr<Camera> &camera,
+                      const std::shared_ptr<PointLight> &pointLight,
+                      const std::shared_ptr<AmbientLight> &ambientLight)
+{
+        /* 1. opengl的必要状态机 */
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+
+        /* 2.清理画布 */
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        /* 3.从scene根节点绘制 */
+        auto pointLights = std::vector<std::shared_ptr<PointLight>>{};
+        pointLights.push_back(pointLight);
+        renderObject(std::static_pointer_cast<Object>(scene), camera, nullptr,
+                     pointLights, nullptr, ambientLight);
+}
+
+void Renderer::setClearColor(const glm::vec3 &color)
+{
+        glClearColor(color.r, color.g, color.b, 1.0f);
+}
+
+void Renderer::setGLStatus(const std::shared_ptr<Material> &material)
+{
+        if (material->mDepthTest) {
+                glEnable(GL_DEPTH_TEST);
+                glDepthFunc(material->mDepthFunc);
+        } else {
+                glDisable(GL_DEPTH_TEST);
+        }
+
+        if (material->mDepthWrite) {
+                glDepthMask(GL_TRUE);
+        } else {
+                glDepthMask(GL_FALSE);
+        }
+}
+
+
+
+
+
+
