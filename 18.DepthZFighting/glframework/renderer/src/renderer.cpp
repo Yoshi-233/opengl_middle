@@ -104,6 +104,12 @@ inline void Renderer::processPointLight(const std::shared_ptr<Shader> &shaderPtr
 inline void Renderer::processSpotLight(const std::shared_ptr<Shader> &shaderPtr,
                                        const std::shared_ptr<SpotLight> &spotLight)
 {
+        if (spotLight == nullptr) {
+                shaderPtr->setFloat("spotLightFlag", 0);
+                return;
+        } else {
+                shaderPtr->setFloat("spotLightFlag", 1);
+        }
         CHECK_POINTER_RETURN_VOID(spotLight);
         shaderPtr->setVectorFloat("spotLight.position", spotLight->getPosition());
         shaderPtr->setVectorFloat("spotLight.color", spotLight->getColor());
@@ -250,7 +256,9 @@ void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::sh
                                 Renderer::processCommonInfo(shaderPtr, camera, mesh);
 
                                 /* 光源参数更新 */
-                                Renderer::processBasicShiness(shaderPtr, phongMaterial, ambientLight);
+                                if (ambientLight != nullptr) {
+                                        Renderer::processBasicShiness(shaderPtr, phongMaterial, ambientLight);
+                                }
 
                                 /* 点光源参数 */
                                 Renderer::processPointLight(shaderPtr, pointLights);
@@ -261,9 +269,7 @@ void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::sh
                                 }
 
                                 /* 聚光灯参数 */
-                                if (spotLight != nullptr) {
-                                        Renderer::processSpotLight(shaderPtr, spotLight);
-                                }
+                                Renderer::processSpotLight(shaderPtr, spotLight);
                         }
                                 break;
                         case MaterialType::WhiteMaterial: {
@@ -373,7 +379,7 @@ void Renderer::setGLStatus(const std::shared_ptr<Material> &material)
                 glDepthMask(GL_FALSE);
         }
 
-        if(material->mPolygonOffset) {
+        if (material->mPolygonOffset) {
                 glEnable(material->mPolygonOffsetType);
                 /*
                  * param1 * 斜率因子 + param2 * 最小精度偏移
@@ -382,7 +388,7 @@ void Renderer::setGLStatus(const std::shared_ptr<Material> &material)
                  * 因此斜率因子可以根据这一特性使得较远处的平面偏移更大些
                  * 2. 当两个mesh很近时，出现穿模现象，使用该参数可以让平面稍微后移，精度为float
                  * */
-                glPolygonOffset(material->mFactor, material->mUint);
+                glPolygonOffset(material->mFactor, material->mUnit);
         } else {
                 glDisable(GL_POLYGON_OFFSET_FILL);
                 glDisable(GL_POLYGON_OFFSET_LINE);

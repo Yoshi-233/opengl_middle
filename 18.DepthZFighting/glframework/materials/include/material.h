@@ -33,7 +33,7 @@ public:
         bool mPolygonOffset{false};
         unsigned int mPolygonOffsetType{GL_POLYGON_OFFSET_FILL};
         float mFactor{0.0f};
-        float mUint{0.0f};
+        float mUnit{0.0f};
 };
 
 #endif //RENDERER_MATERIAL_H

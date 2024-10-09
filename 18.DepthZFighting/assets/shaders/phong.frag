@@ -48,6 +48,7 @@ uniform PointLight pointLights[POINT_LIGHT_NUM];
 uniform DirectionalLight directionalLight;
 uniform float specularMaskFlag = 1.0f;
 uniform float pointLightsFlag = 1.0f;
+uniform float spotLightFlag = 1.0f;
 
 // 计算漫反射相关的函数
 vec3 calculateDiffuse(vec3 lightColor, vec3 objColor, vec3 lightDirN, vec3 normalN)
@@ -155,11 +156,11 @@ void main()
         vec3 targetDirN = normalize(spotLight.targetDirection);
 
         /* 计算各种光照 */
-        result += calculateSpotLight(spotLight, normalN, viewDir);
+        result += (spotLightFlag != 0.0f) ? calculateSpotLight(spotLight, normalN, viewDir) : vec3(0.0f);
         result += calculateDirectionalLight(directionalLight, normalN, viewDir);
         for (int i = 0; i < POINT_LIGHT_NUM; i++) {
                 result += (pointLightsFlag != 0.0f) ?
-                        calculatePointLight(pointLights[i], normalN, viewDir) : vec3(0.0f);
+                calculatePointLight(pointLights[i], normalN, viewDir) : vec3(0.0f);
         }
 
         /* 环境光 */

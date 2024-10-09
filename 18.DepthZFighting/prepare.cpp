@@ -50,7 +50,7 @@ static void prepareCamera()
 {
         camera = std::make_shared<PerspectiveCamera>(60.0f,
                                                      (float) APP.getWidth() / (float) APP.getHeight(),
-                                                     0.1f, 50.0f);
+                                                     0.1f, 1000.0f);
 
         cameraControl = std::make_shared<GameCameraController>();
         cameraControl->setCamera(camera.get());
@@ -68,33 +68,27 @@ void prepareAll()
         auto materialA = std::make_shared<PhongMaterial>();
         materialA->setDiffuse(std::make_shared<Texture>("assets/textures/dog_1.jpg", 0));
         auto meshA = std::make_shared<Mesh>(geometry, materialA);
-        // meshA->rotateX(-88.0f);
+        meshA->rotateX(-88.0f);
         scene->addChild(meshA);
 
         auto materialB = std::make_shared<PhongMaterial>();
         materialB->setDiffuse(std::make_shared<Texture>("assets/textures/goku.jpg", 0));
-        // materialB->mDepthWrite = false;
         materialB->mPolygonOffset = true;
         materialB->mFactor = 1.0f;
-        materialB->mUint = 1.0f;
+        materialB->mUnit = 0.0f;
         auto meshB = std::make_shared<Mesh>(geometry, materialB);
         meshB->setPosition(glm::vec3(0.0f, 0.0f, -0.5f));
-        // meshB->rotateX(-88.0f);
+        meshB->rotateX(-88.0f);
         scene->addChild(meshB);
 
-        auto model = AssimpLoader::loadModel("assets/fbx/bag/backpack.obj");
-        model->setScale(glm::vec3(0.5f));
-        model->setPosition(glm::vec3(0.0f, 5.0f, 0.0f));
-        scene->addChild(model);
-
-        /* 1. 创建环境光light */
-        ambLight = std::make_shared<AmbientLight>();
-        ambLight->setColor(glm::vec3(0.2f));
-
-        /* 2. 创建平行光 */
+        /* 创建平行光 */
         directionalLight = std::make_shared<DirectionalLight>();
-        directionalLight->setDirection(glm::vec3(-1.0f, -1.0f, -1.0f));
-        directionalLight->setSpecularIntensity(0.5f);
+        directionalLight->setDirection(glm::vec3(-1.0f));
+        directionalLight->setSpecularIntensity(0.1f);
+
+        /* 创建环境光 */
+        ambLight = std::make_shared<AmbientLight>();
+        ambLight->setColor(glm::vec3(0.1f));
 
         prepareCamera();
 }
