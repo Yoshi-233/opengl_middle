@@ -171,5 +171,5 @@ void main()
         vec3 finalColor = result + ambientColor;
 
         // 最终计算
-        fragColor = vec4(finalColor, objAlpha);
+        fragColor = vec4(finalColor, 0.4);
 }
