@@ -11,6 +11,7 @@ enum class MaterialType {
         PhongMaterial,
         PhongEnvMaterial,
         PhongInstancedMaterial,
+        GrassInstancedMaterial,
         WhiteMaterial,
         DepthMaterial,
         OpacityMaskMaterial,

@@ -18,6 +18,7 @@
 #include "../../materials/include/phongMaterial.h"
 #include "../../materials/include/phongEnvMaterial.h"
 #include "../../materials/include/phongInstancedMaterial.h"
+#include "../../materials/include/grassInstancedMaterial.h"
 #include "../../../application/camera/include/camera.h"
 
 
@@ -98,6 +99,9 @@ private:
         static inline void processSpecularMask(const std::shared_ptr<Shader> &shaderPtr,
                                                PhongInstancedMaterial *phongMaterial);
 
+        static inline void processSpecularMask(const std::shared_ptr<Shader> &shaderPtr,
+                                               GrassInstancedMaterial *phongMaterial);
+
 private:
         static inline void processCommonInfo(const std::shared_ptr<Shader> &shaderPtr,
                                              const std::shared_ptr<Camera> &camera,
@@ -140,6 +144,7 @@ private:
         std::shared_ptr<Shader> mPhoneShader{nullptr};
         std::shared_ptr<Shader> mPhoneEnvShader{nullptr};
         std::shared_ptr<Shader> mPhoneInstancedShader{nullptr};
+        std::shared_ptr<Shader> mGrassInstancedShader{nullptr};
         std::shared_ptr<Shader> mWhiteShader{nullptr};
         std::shared_ptr<Shader> mDepthShader{nullptr};
         std::shared_ptr<Shader> mOpacityMaskShader{nullptr};

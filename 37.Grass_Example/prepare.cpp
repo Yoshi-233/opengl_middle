@@ -20,6 +20,7 @@
 #include "glframework/materials/include/phongMaterial.h"
 #include "glframework/materials/include/phongEnvMaterial.h"
 #include "glframework/materials/include/phongInstancedMaterial.h"
+#include "glframework/materials/include/grassInstancedMaterial.h"
 #include "glframework/materials/include/opacityMaskMaterial.h"
 #include "glframework/materials/include/whiteMaterial.h"
 #include "glframework/materials/include/depthMaterial.h"
@@ -58,6 +59,8 @@ std::shared_ptr<CameraControl> cameraControl;
 glm::vec3 clearColor{0.0f, 0.0f, 0.0f};
 
 std::shared_ptr<Framebuffer> framebuffer;
+
+std::shared_ptr<GrassInstancedMaterial> grassMaterial;
 
 static void prepareCamera()
 {
@@ -112,6 +115,19 @@ static void updateInstancedMatrix(std::shared_ptr<Object> &obj)
         }
 }
 
+static void setInstancedMaterial(std::shared_ptr<Object> &obj, std::shared_ptr<Material> material)
+{
+        if (obj->getType() == ObjectType::INSTANCED_MESH) {
+                auto instancedMesh = std::dynamic_pointer_cast<InstanceMesh>(obj);
+                instancedMesh->mMaterial = material;
+        }
+
+        auto children = obj->getChildren();
+        for (auto child: children) {
+                setInstancedMaterial(child, material);
+        }
+}
+
 void prepareAll()
 {
         // 必须先准备fbo再准备其他资源
@@ -121,6 +137,11 @@ void prepareAll()
         // sceneOffScreen = std::make_shared<Scene>();
         sceneInScreen = std::make_shared<Scene>();
 
+        auto boxGeo = Geometry::createBox(1.0f);
+        auto boxMat = std::make_shared<CubeMaterial>();
+        boxMat->mDiffuse = std::make_shared<Texture>("assets/textures/bk.jpg", 0);
+        auto boxMesh = std::make_shared<Mesh>(boxGeo, boxMat);
+        sceneInScreen->addChild(boxMesh);
 
         auto sphereGeo = Geometry::createSphere(4.0f);
         auto sphereMat = std::make_shared<PhongInstancedMaterial>();
@@ -130,13 +151,15 @@ void prepareAll()
         setInstancedMatrix(grassModel, 0, glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
         setInstancedMatrix(grassModel, 1, glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 0.0f, 0.0f)));
         updateInstancedMatrix(grassModel);
+
+        grassMaterial = std::make_shared<GrassInstancedMaterial>();
+        grassMaterial->setDiffuse(std::make_shared<Texture>("assets/textures/GRASS.PNG", 0));
+        setInstancedMaterial(grassModel,
+                             std::dynamic_pointer_cast<Material>(grassMaterial));
+
         sceneInScreen->addChild(grassModel);
 
-        auto boxGeo = Geometry::createBox(1.0f);
-        auto boxMat = std::make_shared<CubeMaterial>();
-        boxMat->mDiffuse = std::make_shared<Texture>("assets/textures/bk.jpg", 0);
-        auto boxMesh = std::make_shared<Mesh>(boxGeo, boxMat);
-        sceneInScreen->addChild(boxMesh);
+
 
 
         /* 创建平行光 */

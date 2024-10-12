@@ -6,6 +6,7 @@
 #include <../../glframework/tools/include/tools.h>
 #include <../../glframework/materials/include/phongMaterial.h>
 #include <../../glframework/materials/include/phongInstancedMaterial.h>
+#include <../../glframework/materials/include/grassInstancedMaterial.h>
 
 std::shared_ptr<Object> AssimpInstanceLoader::loadModel(const std::string &path, int instanceCount)
 {

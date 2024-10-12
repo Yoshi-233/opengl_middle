@@ -32,6 +32,11 @@ Renderer::Renderer()
         this->mPhoneInstancedShader = std::make_shared<Shader>(phongInstancedVertexPath.c_str(),
                                                                phongInstancedFragmentPath.c_str());
 
+        auto grassInstancedVertexPath = std::string(PROJECT_DIR) + "/assets/shaders/grassInstanced.vert";
+        auto grassInstancedFragmentPath = std::string(PROJECT_DIR) + "/assets/shaders/grassInstanced.frag";
+        this->mGrassInstancedShader = std::make_shared<Shader>(grassInstancedVertexPath.c_str(),
+                                                               grassInstancedFragmentPath.c_str());
+
         auto whiteVertexPath = std::string(PROJECT_DIR) + "/assets/shaders/white.vert";
         auto whiteFragmentPath = std::string(PROJECT_DIR) + "/assets/shaders/white.frag";
         this->mWhiteShader = std::make_shared<Shader>(whiteVertexPath.c_str(),
@@ -75,6 +80,9 @@ std::shared_ptr<Shader> Renderer::pickShader(MaterialType type)
                         break;
                 case MaterialType::PhongInstancedMaterial:
                         result = this->mPhoneInstancedShader;
+                        break;
+                case MaterialType::GrassInstancedMaterial:
+                        result = this->mGrassInstancedShader;
                         break;
                 case MaterialType::WhiteMaterial:
                         result = this->mWhiteShader;
@@ -256,6 +264,19 @@ void Renderer::processSpecularMask(const std::shared_ptr<Shader> &shaderPtr,
         }
 }
 
+void Renderer::processSpecularMask(const std::shared_ptr<Shader> &shaderPtr,
+                                   GrassInstancedMaterial *phongMaterial)
+{
+        if (phongMaterial->getSpecularMask() != nullptr) {
+                // 高光蒙板
+                shaderPtr->setFloat("specularMaskFlag", 1.0f);
+                shaderPtr->setInt("specularMaskSampler", 1);
+                phongMaterial->getSpecularMask()->bind();
+        } else {
+                shaderPtr->setFloat("specularMaskFlag", 0.0f);
+        }
+}
+
 void Renderer::processCommonInfo(const std::shared_ptr<Shader> &shaderPtr,
                                  const std::shared_ptr<Camera> &camera,
                                  const std::shared_ptr<Mesh> &mesh)
@@ -423,6 +444,43 @@ void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::sh
                                 break;
                         case MaterialType::PhongInstancedMaterial: {
                                 auto phongMaterial = (PhongInstancedMaterial *) material.get();
+                                auto instanceMesh = (InstanceMesh *) mesh.get();
+                                // diffuse贴图
+                                // 设置sampler采样第0号纹理，注意这里默认是0
+                                // 图片
+                                CHECK_POINTER_RETURN_VOID(phongMaterial->getDiffuse());
+                                shaderPtr->setInt("sampler", 0);
+                                phongMaterial->getDiffuse()->bind();
+
+                                /* 透明度 */
+                                shaderPtr->setFloat("opacity", phongMaterial->mOpacity);
+
+                                Renderer::processSpecularMask(shaderPtr, phongMaterial);
+
+                                Renderer::processCommonInfo(shaderPtr, camera, mesh);
+
+                                /* 光源参数更新 */
+                                if (ambientLight != nullptr) {
+                                        Renderer::processAmbientShiness(shaderPtr, ambientLight);
+                                }
+                                shaderPtr->setFloat("shiness", phongMaterial->getShiness());
+
+
+                                /* 点光源参数 */
+                                Renderer::processPointLight(shaderPtr, pointLights);
+
+                                /* 平行光参数 */
+                                if (directionalLight != nullptr) {
+                                        Renderer::processDirectionLight(shaderPtr, directionalLight);
+                                }
+
+                                /* 聚光灯参数 */
+                                Renderer::processSpotLight(shaderPtr, spotLight);
+
+                        }
+                                break;
+                        case MaterialType::GrassInstancedMaterial: {
+                                auto phongMaterial = (GrassInstancedMaterial *) material.get();
                                 auto instanceMesh = (InstanceMesh *) mesh.get();
                                 // diffuse贴图
                                 // 设置sampler采样第0号纹理，注意这里默认是0
