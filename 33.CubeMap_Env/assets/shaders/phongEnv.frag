@@ -3,6 +3,7 @@ out vec4 fragColor;
 
 uniform sampler2D sampler;
 uniform sampler2D specularMaskSampler;
+uniform samplerCube envSampler;
 in vec2 uv;
 in vec3 normal;
 in vec3 worldPosition;
@@ -146,6 +147,14 @@ vec3 calculateDirectionalLight(DirectionalLight light, vec3 normalN, vec3 viewDi
 
 }
 
+vec3 calculateEnvLight(vec3 normal, vec3 viewDir)
+{
+        vec3 reflectDir = normalize(reflect(viewDir, normal));
+        vec3 color = texture(envSampler, reflectDir).rgb;
+
+        return color;
+}
+
 void main()
 {
         vec3 result = vec3(0.0f, 0.0f, 0.0f);
@@ -168,7 +177,7 @@ void main()
         }
 
         /* 环境光 */
-        vec3 ambientColor = objColor * ambientColor;
+        vec3 ambientColor = objColor * calculateEnvLight(normal, viewDir);
 
         /* 计算最终颜色 */
         vec3 finalColor = result + ambientColor;

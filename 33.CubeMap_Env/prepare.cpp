@@ -105,6 +105,7 @@ void prepareAll()
         auto sphereGeo = Geometry::createSphere(4.0f);
         auto sphereMat = std::make_shared<PhongEnvMaterial>();
         sphereMat->setDiffuse(std::make_shared<Texture>("assets/textures/earth.png", 0));
+        sphereMat->setEnv(std::make_shared<Texture>(paths, 2));
         auto sphereMesh = std::make_shared<Mesh>(sphereGeo, sphereMat);
         sceneInScreen->addChild(sphereMesh);
 

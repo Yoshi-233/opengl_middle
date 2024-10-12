@@ -42,6 +42,15 @@ std::shared_ptr<Texture> PhongEnvMaterial::getSpecularMask() const
         return this->mSpecularMask;
 }
 
+void PhongEnvMaterial::setEnv(std::shared_ptr<Texture> env)
+{
+        this->mEnv = std::move(env);
+}
+
+std::shared_ptr<Texture> PhongEnvMaterial::getEnv() const
+{
+        return this->mEnv;
+}
 
 PhongEnvMaterial::~PhongEnvMaterial()
 = default;

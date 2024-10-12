@@ -370,6 +370,11 @@ void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::sh
 
                                 Renderer::processSpecularMask(shaderPtr, phongMaterial);
 
+                                if(phongMaterial->getEnv() != nullptr) {
+                                        shaderPtr->setInt("envSampler", 2);
+                                        phongMaterial->getEnv()->bind();
+                                }
+
                                 Renderer::processCommonInfo(shaderPtr, camera, mesh);
 
                                 /* 光源参数更新 */
