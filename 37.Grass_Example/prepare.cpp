@@ -71,7 +71,7 @@ static void prepareCamera()
         cameraControl = std::make_shared<GameCameraController>();
         cameraControl->setCamera(camera.get());
         // 智能指针安全向下转型
-        std::dynamic_pointer_cast<GameCameraController>(cameraControl)->setSpeed(0.4);
+        std::dynamic_pointer_cast<GameCameraController>(cameraControl)->setSpeed(0.2);
 }
 
 void setModelBlend(std::shared_ptr<Object> &obj, bool blend, float opacity)
@@ -152,10 +152,15 @@ void prepareAll()
         auto grassModel = AssimpInstanceLoader::loadModel(
                 "assets/fbx/grassNew.obj", rNum * cNum);
         glm::mat4 translate;
+        glm::mat4 rotate;
+        glm::mat4 transformMat;
+        srand(glfwGetTime());
+
         for (int i = 0; i < rNum; i++) {
                 for (int j = 0; j < cNum; j++) {
                         translate = glm::translate(glm::mat4(1.0f), glm::vec3((float)i * 0.2f, 0.0f, (float)j * 0.2f));
-                        setInstancedMatrix(grassModel, i * cNum + j, translate);
+                        rotate = glm::rotate(glm::radians((float)(rand() % 90)),  glm::vec3(0.0f, 1.0f, 0.0f));
+                        setInstancedMatrix(grassModel, i * cNum + j, translate * rotate);
                 }
         }
         updateInstancedMatrix(grassModel);

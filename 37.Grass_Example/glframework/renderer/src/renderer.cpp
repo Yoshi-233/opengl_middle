@@ -288,8 +288,8 @@ void Renderer::processCommonInfo(const std::shared_ptr<Shader> &shaderPtr,
         shaderPtr->setMatrix<decltype(camera->getProjectionMatrix())>("projectionMatrix",
                                                                       camera->getProjectionMatrix());
 
-        auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
-        shaderPtr->setMatrix<decltype(normalMatrix)>("normalMatrix", normalMatrix);
+        // auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
+        // shaderPtr->setMatrix<decltype(normalMatrix)>("normalMatrix", normalMatrix);
 
         // 光源参数更新
         shaderPtr->setVectorFloat("cameraPosition", camera->mPosition);
