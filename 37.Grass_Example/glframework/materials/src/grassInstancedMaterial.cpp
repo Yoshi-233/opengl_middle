@@ -52,6 +52,16 @@ std::shared_ptr<Texture> GrassInstancedMaterial::getOpacityMask() const
         return this->mOpacityMask;
 }
 
+void GrassInstancedMaterial::setUVScale(float uvScale)
+{
+        this->mUVScale = uvScale;
+}
+
+float GrassInstancedMaterial::getUVScale() const
+{
+        return this->mUVScale;
+}
+
 
 GrassInstancedMaterial::~GrassInstancedMaterial()
 = default;

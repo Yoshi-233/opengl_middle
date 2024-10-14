@@ -147,8 +147,8 @@ void prepareAll()
         auto sphereMat = std::make_shared<PhongInstancedMaterial>();
         sphereMat->setDiffuse(std::make_shared<Texture>("assets/textures/earth.png", 0));
 
-        int rNum = 20;
-        int cNum = 20;
+        int rNum = 50;
+        int cNum = 50;
         auto grassModel = AssimpInstanceLoader::loadModel(
                 "assets/fbx/grassNew.obj", rNum * cNum);
         glm::mat4 translate;
@@ -158,8 +158,9 @@ void prepareAll()
 
         for (int i = 0; i < rNum; i++) {
                 for (int j = 0; j < cNum; j++) {
-                        translate = glm::translate(glm::mat4(1.0f), glm::vec3((float)i * 0.2f, 0.0f, (float)j * 0.2f));
-                        rotate = glm::rotate(glm::radians((float)(rand() % 90)),  glm::vec3(0.0f, 1.0f, 0.0f));
+                        translate = glm::translate(glm::mat4(1.0f),
+                                                   glm::vec3((float) i * 0.2f, 0.0f, (float) j * 0.2f));
+                        rotate = glm::rotate(glm::radians((float) (rand() % 90)), glm::vec3(0.0f, 1.0f, 0.0f));
                         setInstancedMatrix(grassModel, i * cNum + j, translate * rotate);
                 }
         }
@@ -247,10 +248,10 @@ void renderImgui()
         ImGui::NewFrame();
 
         /* 2. 决定当前有哪些控件，从上到下 */
-        ImGui::Begin("hello");
-        ImGui::Text("Hello, world!");
-        ImGui::Button("test button", ImVec2(40, 20));
-        ImGui::ColorEdit3("clear color", glm::value_ptr(clearColor)); // 初始值为黑色
+        ImGui::Begin("GrassMaterialEditor");
+        ImGui::Text("Grass Material Editor");
+        ImGui::SliderFloat("UVscale", &grassMaterial->mUVScale,0.0f, 100.0f);
+        ImGui::InputFloat("brightness", &grassMaterial->mBrightness);
         ImGui::End();
 
         /* 3. 执行渲染 */

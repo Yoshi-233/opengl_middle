@@ -21,6 +21,8 @@ public:
 
         void setShiness(float shiness);
 
+        void setUVScale(float uvScale);
+
         [[nodiscard]] std::shared_ptr<Texture> getDiffuse() const;
 
         [[nodiscard]] std::shared_ptr<Texture> getSpecularMask() const;
@@ -29,6 +31,10 @@ public:
 
         [[nodiscard]] float getShiness() const;
 
+        [[nodiscard]] float getUVScale() const;
+public:
+        float mUVScale{1.0f};
+        float mBrightness{1.0f};
 protected:
         std::shared_ptr<Texture> mDiffuse{nullptr};
         std::shared_ptr<Texture> mSpecularMask{nullptr};

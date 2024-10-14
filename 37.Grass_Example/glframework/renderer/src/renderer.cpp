@@ -505,6 +505,8 @@ void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::sh
                                         Renderer::processAmbientShiness(shaderPtr, ambientLight);
                                 }
                                 shaderPtr->setFloat("shiness", phongMaterial->getShiness());
+                                shaderPtr->setFloat("uvScale", phongMaterial->getUVScale());
+                                shaderPtr->setFloat("brightness", phongMaterial->mBrightness);
 
 
                                 /* 点光源参数 */

@@ -17,6 +17,10 @@ uniform vec3 cameraPosition;
 // 高光强度，由物体材质决定
 uniform float shiness;
 
+// 草地贴图特性
+uniform float uvScale;
+uniform float brightness;
+
 struct DirectionalLight {
         vec3 direction;
         vec3 color;
@@ -89,11 +93,10 @@ vec3 calculateSpecular(vec3 lightColor, vec3 lightDirN, vec3 normalN, vec3 viewD
 }
 
 // 计算聚光灯相关的函数
-vec3 calculateSpotLight(SpotLight light, vec3 normalN, vec3 viewDir)
+vec3 calculateSpotLight(vec3 objColor, SpotLight light, vec3 normalN, vec3 viewDir)
 {
         /* 需要lightDir和normal都进行归一化 */
         /* 1. 计算光照的通用数据 */
-        vec3 objColor = texture(sampler, uv).rgb;//物体颜色
         vec3 lightDirN = normalize(worldPosition - light.position);
         // 摄像机到物体向量 数据
         vec3 targetDirN = normalize(light.targetDirection);
@@ -112,10 +115,9 @@ vec3 calculateSpotLight(SpotLight light, vec3 normalN, vec3 viewDir)
 }
 
 // 计算点光源相关的函数
-vec3 calculatePointLight(PointLight light, vec3 normalN, vec3 viewDir)
+vec3 calculatePointLight(vec3 objColor, PointLight light, vec3 normalN, vec3 viewDir)
 {
         /* 1. 计算光照的通用数据 */
-        vec3 objColor = texture(sampler, uv).rgb;//物体颜色
         vec3 lightDirN = normalize(worldPosition - light.position);
 
         /* 2. 准备漫反射相关数据 */
@@ -131,10 +133,9 @@ vec3 calculatePointLight(PointLight light, vec3 normalN, vec3 viewDir)
 }
 
 // 计算平行光相关的函数
-vec3 calculateDirectionalLight(DirectionalLight light, vec3 normalN, vec3 viewDir)
+vec3 calculateDirectionalLight(vec3 objColor, DirectionalLight light, vec3 normalN, vec3 viewDir)
 {
         /* 1. 计算光照的通用数据 */
-        vec3 objColor = texture(sampler, uv).rgb;//物体颜色
         vec3 lightDirN = normalize(light.direction);
 
         /* 2. 准备漫反射相关数据 */
@@ -150,8 +151,11 @@ vec3 calculateDirectionalLight(DirectionalLight light, vec3 normalN, vec3 viewDi
 void main()
 {
         vec3 result = vec3(0.0f, 0.0f, 0.0f);
+        vec2 worldXZ = worldPosition.xz;
+        vec2 worldUV = worldXZ / uvScale;
+
         // 计算光照的通用数据
-        vec3 objColor = texture(sampler, uv).rgb;//物体颜色
+        vec3 objColor = texture(sampler, worldUV).rgb * brightness;//物体颜色
         float objAlpha = texture(opacityMask, uv).r;
         // diffuse 数据
         vec3 normalN = normalize(normal);
@@ -161,11 +165,11 @@ void main()
         vec3 targetDirN = normalize(spotLight.targetDirection);
 
         /* 计算各种光照 */
-        result += (spotLightFlag != 0.0f) ? calculateSpotLight(spotLight, normalN, viewDir) : vec3(0.0f);
-        result += calculateDirectionalLight(directionalLight, normalN, viewDir);
+        result += (spotLightFlag != 0.0f) ? calculateSpotLight(objColor, spotLight, normalN, viewDir) : vec3(0.0f);
+        result += calculateDirectionalLight(objColor, directionalLight, normalN, viewDir);
         for (int i = 0; i < POINT_LIGHT_NUM; i++) {
                 result += (pointLightsFlag != 0.0f) ?
-                calculatePointLight(pointLights[i], normalN, viewDir) : vec3(0.0f);
+                calculatePointLight(objColor, pointLights[i], normalN, viewDir) : vec3(0.0f);
         }
 
         /* 环境光 */
