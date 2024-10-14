@@ -12,13 +12,17 @@ public:
         InstanceMesh(const std::shared_ptr<Geometry> &geometry,
                      const std::shared_ptr<Material> &material,
                      unsigned int numInstanced);
+
         ~InstanceMesh() override;
+
 public:
         void updataMatrices();
 
+        void sortMatrices(const glm::mat4 &viewMatrix);
+
 public:
         unsigned int numInstanced{0};
-        glm::mat4* instanceData{};
+        std::vector<glm::mat4> instanceData{};
         unsigned int mMatrixVBO{0};
 };
 

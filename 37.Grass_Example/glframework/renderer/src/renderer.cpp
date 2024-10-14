@@ -482,6 +482,8 @@ void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::sh
                         case MaterialType::GrassInstancedMaterial: {
                                 auto phongMaterial = (GrassInstancedMaterial *) material.get();
                                 auto instanceMesh = (InstanceMesh *) mesh.get();
+                                instanceMesh->sortMatrices(camera->getViewMatrix());
+                                instanceMesh->updataMatrices();
                                 // diffuse贴图
                                 // 设置sampler采样第0号纹理，注意这里默认是0
                                 // 图片

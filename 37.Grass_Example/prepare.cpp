@@ -147,9 +147,17 @@ void prepareAll()
         auto sphereMat = std::make_shared<PhongInstancedMaterial>();
         sphereMat->setDiffuse(std::make_shared<Texture>("assets/textures/earth.png", 0));
 
-        auto grassModel = AssimpInstanceLoader::loadModel("assets/fbx/grassNew.obj", 2);
-        setInstancedMatrix(grassModel, 0, glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
-        setInstancedMatrix(grassModel, 1, glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+        int rNum = 20;
+        int cNum = 20;
+        auto grassModel = AssimpInstanceLoader::loadModel(
+                "assets/fbx/grassNew.obj", rNum * cNum);
+        glm::mat4 translate;
+        for (int i = 0; i < rNum; i++) {
+                for (int j = 0; j < cNum; j++) {
+                        translate = glm::translate(glm::mat4(1.0f), glm::vec3((float)i * 0.2f, 0.0f, (float)j * 0.2f));
+                        setInstancedMatrix(grassModel, i * cNum + j, translate);
+                }
+        }
         updateInstancedMatrix(grassModel);
 
         grassMaterial = std::make_shared<GrassInstancedMaterial>();
