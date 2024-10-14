@@ -2,16 +2,20 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aUV;
 layout (location = 2) in vec3 aNormal;
-layout (location = 3) in mat4 aInstanceMatrix;
+layout (location = 3) in vec3 aColor;
+layout (location = 4) in mat4 aInstanceMatrix;
 
 out vec2 uv;
 out vec3 normal;
 out vec3 worldPosition;
+out vec2 worldXZ;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
+
+uniform float time;
 
 void main()
 {
@@ -19,6 +23,10 @@ void main()
 
         // 每一次都先x自己的变换，再x总体的变换
         transformPosition = modelMatrix * aInstanceMatrix * transformPosition;// 1.0表示确切位置
+
+        worldXZ -= transformPosition.xz;
+        // 风力变动
+        transformPosition.x += sin(time) * (1.0 - aColor.r) * 0.1;
         worldPosition = transformPosition.xyz;
 
         // aPos不允许更改

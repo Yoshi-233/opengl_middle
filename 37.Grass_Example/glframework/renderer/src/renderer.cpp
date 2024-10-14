@@ -507,6 +507,7 @@ void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::sh
                                 shaderPtr->setFloat("shiness", phongMaterial->getShiness());
                                 shaderPtr->setFloat("uvScale", phongMaterial->getUVScale());
                                 shaderPtr->setFloat("brightness", phongMaterial->mBrightness);
+                                shaderPtr->setFloat("time", (float)glfwGetTime());
 
 
                                 /* 点光源参数 */

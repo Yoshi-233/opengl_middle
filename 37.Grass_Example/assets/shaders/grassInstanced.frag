@@ -21,6 +21,8 @@ uniform float shiness;
 uniform float uvScale;
 uniform float brightness;
 
+in vec2 worldXZ;
+
 struct DirectionalLight {
         vec3 direction;
         vec3 color;
@@ -151,7 +153,6 @@ vec3 calculateDirectionalLight(vec3 objColor, DirectionalLight light, vec3 norma
 void main()
 {
         vec3 result = vec3(0.0f, 0.0f, 0.0f);
-        vec2 worldXZ = worldPosition.xz;
         vec2 worldUV = worldXZ / uvScale;
 
         // 计算光照的通用数据

@@ -21,11 +21,11 @@ InstanceMesh::InstanceMesh(const std::shared_ptr<Geometry> &geometry, const std:
         glBindBuffer(GL_ARRAY_BUFFER, this->mMatrixVBO);
 
         for (int i = 0; i < 4; i++) {
-                glEnableVertexAttribArray(3 + i);
-                glVertexAttribPointer(3 + i, 4, GL_FLOAT, GL_FALSE,
+                glEnableVertexAttribArray(4 + i);
+                glVertexAttribPointer(4 + i, 4, GL_FLOAT, GL_FALSE,
                                       sizeof(glm::mat4), (void *) (sizeof(float) * 4 * i));
 
-                glVertexAttribDivisor(3 + i, 1); // 实例渲染
+                glVertexAttribDivisor(4 + i, 1); // 实例渲染
         }
         glBindVertexArray(0);
 }
