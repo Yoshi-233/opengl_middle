@@ -3,6 +3,7 @@ out vec4 fragColor;
 
 uniform sampler2D sampler;
 uniform sampler2D specularMaskSampler;
+uniform sampler2D opacityMask;
 in vec2 uv;
 in vec3 normal;
 in vec3 worldPosition;
@@ -151,7 +152,7 @@ void main()
         vec3 result = vec3(0.0f, 0.0f, 0.0f);
         // 计算光照的通用数据
         vec3 objColor = texture(sampler, uv).rgb;//物体颜色
-        float objAlpha = texture(sampler, uv).a;
+        float objAlpha = texture(opacityMask, uv).r;
         // diffuse 数据
         vec3 normalN = normalize(normal);
         vec3 lightDirN = normalize(worldPosition - spotLight.position);

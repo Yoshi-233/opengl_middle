@@ -491,6 +491,8 @@ void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::sh
 
                                 /* 透明度 */
                                 shaderPtr->setFloat("opacity", phongMaterial->mOpacity);
+                                shaderPtr->setInt("opacityMask", 2);
+                                phongMaterial->getOpacityMask()->bind();
 
                                 Renderer::processSpecularMask(shaderPtr, phongMaterial);
 

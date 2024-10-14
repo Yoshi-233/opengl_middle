@@ -42,6 +42,16 @@ std::shared_ptr<Texture> GrassInstancedMaterial::getSpecularMask() const
         return this->mSpecularMask;
 }
 
+void GrassInstancedMaterial::setOpacityMask(std::shared_ptr<Texture> opacityMask)
+{
+        this->mOpacityMask = std::move(opacityMask);
+}
+
+std::shared_ptr<Texture> GrassInstancedMaterial::getOpacityMask() const
+{
+        return this->mOpacityMask;
+}
+
 
 GrassInstancedMaterial::~GrassInstancedMaterial()
 = default;

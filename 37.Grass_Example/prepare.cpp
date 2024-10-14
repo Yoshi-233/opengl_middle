@@ -149,17 +149,18 @@ void prepareAll()
 
         auto grassModel = AssimpInstanceLoader::loadModel("assets/fbx/grassNew.obj", 2);
         setInstancedMatrix(grassModel, 0, glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
-        setInstancedMatrix(grassModel, 1, glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 0.0f, 0.0f)));
+        setInstancedMatrix(grassModel, 1, glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
         updateInstancedMatrix(grassModel);
 
         grassMaterial = std::make_shared<GrassInstancedMaterial>();
         grassMaterial->setDiffuse(std::make_shared<Texture>("assets/textures/GRASS.PNG", 0));
+        grassMaterial->setOpacityMask(std::make_shared<Texture>("assets/textures/grassMask.png", 2));
+        grassMaterial->mBlend = true;
+        grassMaterial->mDepthWrite = false;
         setInstancedMaterial(grassModel,
                              std::dynamic_pointer_cast<Material>(grassMaterial));
 
         sceneInScreen->addChild(grassModel);
-
-
 
 
         /* 创建平行光 */
