@@ -169,12 +169,18 @@ void prepareAll()
         grassMaterial = std::make_shared<GrassInstancedMaterial>();
         grassMaterial->setDiffuse(std::make_shared<Texture>("assets/textures/GRASS.PNG", 0));
         grassMaterial->setOpacityMask(std::make_shared<Texture>("assets/textures/grassMask.png", 2));
+        grassMaterial->mCloudMask = std::make_shared<Texture>("assets/textures/CLOUD.PNG", 3);
         grassMaterial->mBlend = true;
         grassMaterial->mDepthWrite = false;
         setInstancedMaterial(grassModel,
                              std::dynamic_pointer_cast<Material>(grassMaterial));
-
         sceneInScreen->addChild(grassModel);
+
+        auto house = AssimpLoader::loadModel("assets/fbx/house.fbx");
+        house->setScale(glm::vec3(0.5f));
+        house->setPosition(glm::vec3((float)rNum * 0.2f / 2.0f, 0.4f,
+                                     (float)cNum * 0.2f / 2.0f));
+        sceneInScreen->addChild(house);
 
 
         /* 创建平行光 */
@@ -251,13 +257,23 @@ void renderImgui()
         ImGui::Begin("GrassMaterialEditor");
 
         ImGui::Text("Grass Material Editor");
-        ImGui::SliderFloat("UVscale", &grassMaterial->mUVScale,0.0f, 100.0f);
+        ImGui::SliderFloat("UVscale", &grassMaterial->mUVScale, 0.0f, 100.0f);
         ImGui::InputFloat("brightness", &grassMaterial->mBrightness);
 
         ImGui::Text("Wind");
         ImGui::InputFloat("windStrength", &grassMaterial->mWindStrength);
         ImGui::InputFloat("phaseScale", &grassMaterial->mPhaseScale);
-        ImGui::ColorEdit3("windDirection", (float*)&grassMaterial->mWindDirection);
+        ImGui::ColorEdit3("windDirection", (float *) &grassMaterial->mWindDirection);
+
+        ImGui::Text("Cloud");
+        ImGui::ColorEdit3("cloudWhiteColor", (float *) &grassMaterial->mCloudWhiteColor);
+        ImGui::ColorEdit3("cloudBlackColor", (float *) &grassMaterial->mCloudBlackColor);
+        ImGui::SliderFloat("cloudUVScale", &grassMaterial->mCloudUVScale, 0.0f, 100.0f);
+        ImGui::InputFloat("cloudSpeed", &grassMaterial->mCloudSpeed);
+        ImGui::SliderFloat("cloudLerp", &grassMaterial->mCloudLerp, 0.0f, 1.0f);
+
+        ImGui::Text("Light");
+        ImGui::InputFloat("Intensity", &directionalLight->mIntensity);
 
         ImGui::End();
 

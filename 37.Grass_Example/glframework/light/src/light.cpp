@@ -23,3 +23,13 @@ void Light::setSpecularIntensity(float intensity)
 {
         this->mSpecularIntensity = intensity;
 }
+
+float Light::getIntensity() const
+{
+        return this->mIntensity;
+}
+
+void Light::setIntensity(float intensity)
+{
+        this->mIntensity = intensity;
+}

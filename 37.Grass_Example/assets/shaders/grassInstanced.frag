@@ -4,6 +4,8 @@ out vec4 fragColor;
 uniform sampler2D sampler;
 uniform sampler2D specularMaskSampler;
 uniform sampler2D opacityMask;
+uniform sampler2D cloudMask;
+
 in vec2 uv;
 in vec3 normal;
 in vec3 worldPosition;
@@ -21,12 +23,22 @@ uniform float shiness;
 uniform float uvScale;
 uniform float brightness;
 
+// 云层
+uniform vec3 cloudWhiteColor;
+uniform vec3 cloudBlackColor;
+uniform float cloudUVScale;
+uniform float time;
+uniform float cloudSpeed;
+uniform vec3 windDirection;
+uniform float cloudLerp;
+
 in vec2 worldXZ;
 
 struct DirectionalLight {
         vec3 direction;
         vec3 color;
         float specularIntensity;
+        float intensity;
 };
 
 struct PointLight {
@@ -137,6 +149,7 @@ vec3 calculatePointLight(vec3 objColor, PointLight light, vec3 normalN, vec3 vie
 // 计算平行光相关的函数
 vec3 calculateDirectionalLight(vec3 objColor, DirectionalLight light, vec3 normalN, vec3 viewDir)
 {
+        light.color *= light.intensity;
         /* 1. 计算光照的通用数据 */
         vec3 lightDirN = normalize(light.direction);
 
@@ -177,7 +190,16 @@ void main()
         vec3 ambientColor = objColor * ambientColor;
 
         /* 计算最终颜色 */
-        vec3 finalColor = result + ambientColor;
+        vec3 grassColor = result + ambientColor;
+
+        /*   云层   */
+        vec3 windDirN = normalize(windDirection);
+        vec2 cloudUV = worldXZ / cloudUVScale;
+        cloudUV += time * cloudSpeed * windDirN.xz;
+        float cloudMask = texture(cloudMask, cloudUV).r;
+        vec3 cloudColor = mix(cloudBlackColor, cloudWhiteColor, cloudMask);
+
+        vec3 finalColor = mix(grassColor, cloudColor, cloudLerp);
 
         // 最终计算
         fragColor = vec4(finalColor, objAlpha * opacity);

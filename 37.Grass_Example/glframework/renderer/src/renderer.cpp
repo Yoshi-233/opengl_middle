@@ -136,6 +136,8 @@ void Renderer::processDirectionLight(const std::shared_ptr<Shader> &shaderPtr,
         shaderPtr->setVectorFloat("directionalLight.color", directionalLight->getColor());
         shaderPtr->setFloat("directionalLight.specularIntensity",
                             directionalLight->getSpecularIntensity());
+        shaderPtr->setFloat("directionalLight.intensity",
+                            directionalLight->getIntensity());
 }
 
 inline void Renderer::processPointLight(const std::shared_ptr<Shader> &shaderPtr,
@@ -515,6 +517,15 @@ void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::sh
                                 shaderPtr->setFloat("windStrength", phongMaterial->mWindStrength);
                                 shaderPtr->setVectorFloat("windDirection", phongMaterial->mWindDirection);
                                 shaderPtr->setFloat("phaseScale", phongMaterial->mPhaseScale);
+
+                                /* 云层 */
+                                shaderPtr->setInt("cloudMask", 3);
+                                phongMaterial->mCloudMask->bind();
+                                shaderPtr->setVectorFloat("cloudWhiteColor", phongMaterial->mCloudWhiteColor);
+                                shaderPtr->setVectorFloat("cloudBlackColor", phongMaterial->mCloudBlackColor);
+                                shaderPtr->setFloat("cloudUVScale", phongMaterial->mCloudUVScale);
+                                shaderPtr->setFloat("cloudSpeed", phongMaterial->mCloudSpeed);
+                                shaderPtr->setFloat("cloudLerp", phongMaterial->mCloudLerp);
 
                                 /* 点光源参数 */
                                 Renderer::processPointLight(shaderPtr, pointLights);

@@ -21,9 +21,16 @@ public:
 
         void setSpecularIntensity(float intensity);
 
+        [[nodiscard]] float getIntensity() const;
+
+        void setIntensity(float intensity);
+public:
+        float mIntensity {1.0f};
+
 protected:
         glm::vec3 mColor {1.0f};
         float mSpecularIntensity {1.0f};
+
 };
 
 #endif //RENDERER_LIGHT_H
