@@ -35,6 +35,11 @@ public:
 public:
         float mUVScale{1.0f};
         float mBrightness{1.0f};
+
+        /* 风力 */
+        float mWindStrength{1.0f};
+        glm::vec3 mWindDirection{1.0f}; // 风向角度，单位为弧度
+        float mPhaseScale{1.0f};
 protected:
         std::shared_ptr<Texture> mDiffuse{nullptr};
         std::shared_ptr<Texture> mSpecularMask{nullptr};

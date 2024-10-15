@@ -147,8 +147,8 @@ void prepareAll()
         auto sphereMat = std::make_shared<PhongInstancedMaterial>();
         sphereMat->setDiffuse(std::make_shared<Texture>("assets/textures/earth.png", 0));
 
-        int rNum = 50;
-        int cNum = 50;
+        int rNum = 10;
+        int cNum = 10;
         auto grassModel = AssimpInstanceLoader::loadModel(
                 "assets/fbx/grassNew.obj", rNum * cNum);
         glm::mat4 translate;
@@ -249,9 +249,16 @@ void renderImgui()
 
         /* 2. 决定当前有哪些控件，从上到下 */
         ImGui::Begin("GrassMaterialEditor");
+
         ImGui::Text("Grass Material Editor");
         ImGui::SliderFloat("UVscale", &grassMaterial->mUVScale,0.0f, 100.0f);
         ImGui::InputFloat("brightness", &grassMaterial->mBrightness);
+
+        ImGui::Text("Wind");
+        ImGui::InputFloat("windStrength", &grassMaterial->mWindStrength);
+        ImGui::InputFloat("phaseScale", &grassMaterial->mPhaseScale);
+        ImGui::ColorEdit3("windDirection", (float*)&grassMaterial->mWindDirection);
+
         ImGui::End();
 
         /* 3. 执行渲染 */

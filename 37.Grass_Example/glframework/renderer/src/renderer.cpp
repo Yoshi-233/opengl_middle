@@ -505,10 +505,16 @@ void Renderer::renderObject(const std::shared_ptr<Object> &object, const std::sh
                                         Renderer::processAmbientShiness(shaderPtr, ambientLight);
                                 }
                                 shaderPtr->setFloat("shiness", phongMaterial->getShiness());
+
+                                /* 贴图 */
                                 shaderPtr->setFloat("uvScale", phongMaterial->getUVScale());
                                 shaderPtr->setFloat("brightness", phongMaterial->mBrightness);
                                 shaderPtr->setFloat("time", (float)glfwGetTime());
 
+                                /* 风力 */
+                                shaderPtr->setFloat("windStrength", phongMaterial->mWindStrength);
+                                shaderPtr->setVectorFloat("windDirection", phongMaterial->mWindDirection);
+                                shaderPtr->setFloat("phaseScale", phongMaterial->mPhaseScale);
 
                                 /* 点光源参数 */
                                 Renderer::processPointLight(shaderPtr, pointLights);

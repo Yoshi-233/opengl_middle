@@ -17,16 +17,24 @@ uniform mat3 normalMatrix;
 
 uniform float time;
 
+// 风力
+uniform vec3 windDirection;
+uniform float windStrength;
+uniform float phaseScale;
+
 void main()
 {
         vec4 transformPosition = vec4(aPos, 1.0f);
 
         // 每一次都先x自己的变换，再x总体的变换
         transformPosition = modelMatrix * aInstanceMatrix * transformPosition;// 1.0表示确切位置
-
         worldXZ -= transformPosition.xz;
+
         // 风力变动
-        transformPosition.x += sin(time) * (1.0 - aColor.r) * 0.1;
+        vec3 windDirN = normalize(windDirection);
+        float phaseDistance = dot(windDirN, transformPosition.xyz);
+        transformPosition += vec4(sin(time  +  phaseDistance / phaseScale) *
+                (1.0 - aColor.r) * windStrength * windDirN, 0.0);
         worldPosition = transformPosition.xyz;
 
         // aPos不允许更改
